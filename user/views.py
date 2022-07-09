@@ -19,6 +19,6 @@ class UserView(APIView):
             # return Response({"msg:회원가입 성공"})
             return Response(user_serializer.data, status=status.HTTP_200_OK)
 
-# 로그인
+# 로그인 기능
 class TokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
