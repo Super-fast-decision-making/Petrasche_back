@@ -18,13 +18,8 @@ def upload(user,image):
 
     Bucket = "pracs3"
 
-    imagename = image.name
-    imagename = imagename.split('.')
-    extension = imagename[1]
-    print(extension)
-
     now = datetime.datetime.now()
-    now = now.strftime('%Y%m%d%H%M%S')
+    now = now.strftime('%Y%m%d%H%M%S%f')
 
     key = f'{user}/{now}.jpg'
 
