@@ -1,4 +1,5 @@
 from asyncore import write
+from numpy import require
 from rest_framework import serializers
 from article.models import Article, Image, Comment
 
@@ -15,7 +16,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class ArticleSerializer(serializers.ModelSerializer):
     comment = CommentSerializer(many=True, read_only=True, source='comment_set')
     image_list = serializers.SerializerMethodField()
-    images = serializers.ListField(write_only=True)
+    images = serializers.ListField(write_only=True, required=False)
 
     def get_image_list(self, obj):
         imgurls = []
@@ -23,13 +24,16 @@ class ArticleSerializer(serializers.ModelSerializer):
             imgurls.append(image.imgurl)
         return imgurls
 
-    def create(self, validated_data):
-        images = validated_data.pop('images')
-        article = Article.objects.create(**validated_data)
-        for image in images:
-            image_data = {'article': article, 'imgurl': image}
-            Image.objects.create(**image_data)
-        return article
+    # 여기서 계속 에러 나서 일단 주석처리
+    # View.py 일단 구현
+    # def create(self, validated_data):
+    #     images = validated_data.pop('images')
+        # article = Article(**validated_data)
+        # article.save()
+    #     # for image in images:
+    #     #     image_data = {'article': article, 'imgurl': image}
+    #     #     Image.objects.create(**image_data)
+        # return article
 
     def update(self, instance, validated_data):
         images = validated_data.pop('images')
@@ -37,9 +41,6 @@ class ArticleSerializer(serializers.ModelSerializer):
         instance.content = validated_data.get('content', instance.content)
         instance.is_active = validated_data.get('is_active', instance.is_active)
         instance.save()
-        for image in images:
-            image_data = {'article': instance, 'imgurl': image}
-            Image.objects.create(**image_data)
         return instance
 
     class Meta:

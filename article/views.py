@@ -3,8 +3,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from article.models import Article, Image, Comment
 from article.serializers import ArticleSerializer, ImageSerializer, CommentSerializer
-
-# Create your views here.
+import datetime
+from article.s3upload import upload as s3
+from user.models import User
 
 class ArticleView(APIView):
     def get(self, request):
@@ -13,9 +14,19 @@ class ArticleView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
+        user = request.user
+        user = user.id
+        request.data['user'] = user
+        images = request.FILES.getlist('image_lists')
+        imgurls = []
+        for image in images:
+            url = s3(user, image)
+            imgurls.append(url)
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            for imgurl in imgurls:
+                Image.objects.create(article=serializer.instance, imgurl=imgurl)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
