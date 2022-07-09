@@ -12,7 +12,7 @@ class Article(BaseModel):
     # tags = TaggableManager("태그",blank=True)
 
     def __str__(self):
-        return f"Article:{self.title}"
+        return f"{self.title}"
 
 class Image(models.Model):
     article = models.ForeignKey(Article, verbose_name="아티클", on_delete=models.CASCADE, null=True)
