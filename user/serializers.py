@@ -1,8 +1,18 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, UserFollowing
+
+
+class UserFollowingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=UserFollowing
+        fields=['user_id', 'following_user_id', 'created_at']
+
+
 
 class UserSerializer(serializers.ModelSerializer):
-    
+    user_following= UserFollowingSerializer(read_only=True)
+    print(user_following)
+
 
 
     def create(self, validated_data):
