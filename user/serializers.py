@@ -10,9 +10,6 @@ class UserFollowingSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    user_following= UserFollowingSerializer(read_only=True)
-    print(user_following)
-
 
 
     def create(self, validated_data):
@@ -24,4 +21,12 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'password','email', 'created_at', 'updated_at']
+        fields = ['username', 'password', 'email', 'created_at', 'updated_at',]
+
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'email': {
+                'error_messages': {'required': '이메일을 입력해주세요', 'invalid': '알맞은 형식의 이메일을 입력해주세요'},
+                'required': False
+            },
+        }
