@@ -1,7 +1,7 @@
 from asyncore import write
-from numpy import require
 from rest_framework import serializers
 from article.models import Article, Image, Comment
+from article.s3upload import upload as s3
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,10 +13,15 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
 
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Article
+        fields = '__all__'
+
 class ArticleSerializer(serializers.ModelSerializer):
     comment = CommentSerializer(many=True, read_only=True, source='comment_set')
     image_list = serializers.SerializerMethodField()
-    images = serializers.ListField(write_only=True, required=False)
+    image_lists = serializers.ListField(write_only=True, required=False)
 
     def get_image_list(self, obj):
         imgurls = []
@@ -24,16 +29,19 @@ class ArticleSerializer(serializers.ModelSerializer):
             imgurls.append(image.imgurl)
         return imgurls
 
-    # 여기서 계속 에러 나서 일단 주석처리
-    # View.py 일단 구현
-    # def create(self, validated_data):
-    #     images = validated_data.pop('images')
-        # article = Article(**validated_data)
-        # article.save()
-    #     # for image in images:
-    #     #     image_data = {'article': article, 'imgurl': image}
-    #     #     Image.objects.create(**image_data)
-        # return article
+    def create(self, validated_data):
+        image_lists = validated_data.pop('image_lists')
+        user = validated_data['user']
+        imgurls = []
+        for image in image_lists:
+            url = s3(user, image)
+            imgurls.append(url)
+        article = Article(**validated_data)
+        article.save()
+        for imageurl in imgurls:
+            image_data = {'article': article, 'imgurl': imageurl}
+            Image.objects.create(**image_data)
+        return article
 
     def update(self, instance, validated_data):
         images = validated_data.pop('images')
@@ -45,4 +53,4 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = '__all__'
+        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'image_list', 'image_lists']
