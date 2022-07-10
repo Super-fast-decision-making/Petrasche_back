@@ -1,8 +1,6 @@
 from django.db import models
 from user.models import BaseModel, User
-# from djangotoolbox.fields import ListField
 
-# Create your models here.
 class Article(BaseModel):
     title = models.CharField("제목", max_length=200, null=True)
     user = models.ForeignKey('user.User', verbose_name="작성자", on_delete=models.CASCADE)
