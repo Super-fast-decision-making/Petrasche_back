@@ -42,6 +42,9 @@ class UserFollowingView(APIView):
         following_user=User.objects.get(username=request.data['username'])
         UserFollowing.objects.create(user_id=request.user, following_user_id= following_user)
         return Response({'msg:성공'}, status=status.HTTP_200_OK)
-    
+
+    #언팔로우
     def delete(self,request):
-        return 
+        following_user=User.objects.get(username=request.data['username'])
+        UserFollowing.objects.filter(user_id=request.user, following_user_id=following_user).delete()
+        return Response({'message': '삭제되었습니다'}, status=status.HTTP_200_OK)
