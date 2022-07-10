@@ -11,11 +11,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
-
+# 회원가입
 class UserView(APIView):
     permission_classes = [permissions.AllowAny]
 
-    # 회원가입
     def post(self, request):
         user_serializer=UserSerializer(data=request.data)
         if user_serializer.is_valid():
@@ -27,12 +26,11 @@ class UserView(APIView):
 class TokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
-
+# 사용자 정보 조회
 class OnlyAuthenticatedUserView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes=[JWTAuthentication]
 
-    # 사용자 정보 조회
     def get(self, request):
         if request. user:
             user_serializer = UserSerializer(request.user).data
