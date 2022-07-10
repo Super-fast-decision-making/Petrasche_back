@@ -2,12 +2,10 @@ from rest_framework import serializers
 from .models import User, UserFollowing
 
 
-class UserFollowingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=UserFollowing
-        fields=['user_id', 'following_user_id', 'created_at']
-
-
+# class UserFollowingSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model=UserFollowing
+#         fields=['user_id', 'following_user_id', 'created_at']
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -20,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'created_at', 'updated_at',]
+        fields = ['username', 'password', 'email', 'created_at', 'updated_at','latitude', 'longitude']
 
         extra_kwargs = {
             'password': {'write_only': True},
