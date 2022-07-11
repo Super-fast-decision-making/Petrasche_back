@@ -51,7 +51,6 @@ class ArticleSerializer(serializers.ModelSerializer):
         return article
 
     def update(self, instance, validated_data):
-        images = validated_data.pop('images')
         instance.title = validated_data.get('title', instance.title)
         instance.content = validated_data.get('content', instance.content)
         instance.is_active = validated_data.get('is_active', instance.is_active)
