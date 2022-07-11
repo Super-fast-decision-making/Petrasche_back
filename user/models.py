@@ -78,10 +78,10 @@ class UserProfile(models.Model):
         ('1', '남자'),
         ('2', '여자'),
     )
-    username = models.OneToOneField(User, verbose_name="유저", on_delete=models.CASCADE)
+    username = models.OneToOneField(User, verbose_name="유저", on_delete=models.CASCADE) #나중에 user로 변수명 수정
     birthday = models.DateField("생년월일", blank=True, null=True)
     gender = models.CharField("성별", max_length=5, choices=gender_choice, null=True, blank=True)
-    is_active= models.BooleanField("공개여부", default=True)
+    is_active= models.BooleanField("공개여부", default=True, null=True, blank=True)
 
 
 

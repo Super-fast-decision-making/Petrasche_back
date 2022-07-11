@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, UserFollowing, PetProfile, UserProfile
+from .models import User,  PetProfile, UserProfile
 
 EMAIL = ("@naver.com", "@gmail.com", "@kakao.com")
 
@@ -23,17 +23,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
 
 
-    gender = serializers.SerializerMethodField()
-    def get_gender(self,obj):
-        return obj.userprofile.gender
+    # gender = serializers.SerializerMethodField()
+    # def get_gender(self,obj):
+    #     return obj.userprofile.gender
     
-    birthday = serializers.SerializerMethodField()
-    def get_birthday(self,obj):
-        return obj.userprofile.birthday
+    # birthday = serializers.SerializerMethodField()
+    # def get_birthday(self,obj):
+    #     return obj.userprofile.birthday
 
-    show_profile = serializers.SerializerMethodField()
-    def get_show_profile(self,obj):
-         return obj.userprofile.is_active
+    # show_profile = serializers.SerializerMethodField()
+    # def get_show_profile(self,obj):
+    #      return obj.userprofile.is_active
     
 
 
@@ -58,7 +58,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'created_at', 'updated_at','latitude', 'longitude', 'gender', 'birthday', 'show_profile']
+        fields = ['username', 'password', 'email', 'created_at', 'updated_at','latitude', 'longitude', ]
 
         extra_kwargs = {
             'password': {'write_only': True},
