@@ -1,9 +1,18 @@
 from rest_framework import serializers
-from .models import User, UserFollowing
+from .models import User, UserFollowing, PetProfile
 
 EMAIL = ("@naver.com", "@gmail.com", "@kakao.com")
 
+class PetProfileSerializer(serializers.ModelSerializer):
 
+    pet_owner = serializers.SerializerMethodField()
+
+    def get_pet_owner(self, obj):
+        return obj.user.username
+
+    class Meta:
+        model = PetProfile
+        fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
 
