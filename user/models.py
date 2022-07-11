@@ -78,3 +78,32 @@ class UserFollowing(models.Model):
     user_id = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
     following_user_id = models.ForeignKey(User, related_name="followers", on_delete=models.CASCADE)
     created_at= models.DateTimeField(auto_now_add=True)
+
+class PetProfile(BaseModel):
+    choice_type = (
+        ('1', '강아지'),
+        ('2', '고양이'),
+        ('3', '기타'),
+    )
+
+    choice_gender = (
+        ('1', '여자'),
+        ('2', '남자'),
+        ('3', '모름'),
+    )
+
+    choice_size = (
+        ('1', '소형'),
+        ('2', '중형'),
+        ('3', '대형'),
+    )
+    user = models.ForeignKey(User, related_name="보호자", on_delete=models.CASCADE)
+    name = models.CharField("이름", max_length=20)
+    birthday = models.DateField("생년월일", blank=True, null=True)
+    type = models.CharField("종류", max_length=5, choices=choice_type)
+    gender = models.CharField("성별", max_length=5, choices=choice_gender, default='3')
+    size = models.CharField("사이즈", max_length=5, choices=choice_size)
+
+    def __str__(self):
+        return f"{self.user.username}님의 {self.name}"
+    
