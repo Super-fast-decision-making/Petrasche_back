@@ -9,21 +9,28 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
+    def get_user(self, obj):
+        return obj.user.username
+
     class Meta:
         model = Comment
         fields = '__all__'
 
-class LikeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Article
-        fields = '__all__'
-
 class ArticleSerializer(serializers.ModelSerializer):
     comment = CommentSerializer(many=True, read_only=True, source='comment_set')
-    image_list = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField()
+    images = serializers.SerializerMethodField()
     image_lists = serializers.ListField(write_only=True, required=False)
 
-    def get_image_list(self, obj):
+    def get_likes(self, obj):
+        like_lists = []
+        for like in obj.like.all():
+            like_lists.append(like.username)
+        return like_lists
+
+    def get_images(self, obj):
         imgurls = []
         for image in obj.image_set.all():
             imgurls.append(image.imgurl)
@@ -53,4 +60,4 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'image_list', 'image_lists']
+        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes']
