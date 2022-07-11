@@ -29,8 +29,8 @@ class TokenObtainPairView(TokenObtainPairView):
 # 사용자 정보 조회//수정
 class OnlyAuthenticatedUserView(APIView):
     permission_classes = [permissions.IsAuthenticated]
-    authentication_classes=[JWTAuthentication]
-
+    # authentication_classes=[JWTAuthentication]
+    
     def get(self, request):
         if request. user:
             user_serializer = UserSerializer(request.user).data
