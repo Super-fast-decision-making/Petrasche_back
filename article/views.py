@@ -76,3 +76,10 @@ class LikeView(APIView):
         else:
             article.like.add(user)
             return Response({"massege" : "좋아요"},status=status.HTTP_200_OK)
+
+class MyArticleView(APIView):
+    def get(self, request):
+        user = request.user
+        articles = Article.objects.filter(user=user)
+        serializer = ArticleSerializer(articles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
