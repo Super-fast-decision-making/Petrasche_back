@@ -5,6 +5,9 @@ from article.models import Article, Image, Comment
 from article.serializers import ArticleSerializer, ImageSerializer, CommentSerializer
 from user.models import User
 
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+
 class ArticleView(APIView):
     def get(self, request):
         articles = Article.objects.all()
@@ -19,19 +22,6 @@ class ArticleView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request, pk):
-        article = Article.objects.get(pk=pk)
-        serializer = ArticleSerializer(article, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    def delete(self, request, pk):
-        article = Article.objects.get(pk=pk)
-        article.delete()
-        return Response({"massege" : "삭제 성공"},status=status.HTTP_200_OK)
 
 class CommentView(APIView):
     def get(self, request, pk):
@@ -78,8 +68,24 @@ class LikeView(APIView):
             return Response({"massege" : "좋아요"},status=status.HTTP_200_OK)
 
 class MyArticleView(APIView):
+
+    authentication_classes=[JWTAuthentication]
+
     def get(self, request):
         user = request.user
         articles = Article.objects.filter(user=user)
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, pk):
+        article = Article.objects.get(pk=pk)
+        serializer = ArticleSerializer(article, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        article = Article.objects.get(pk=pk)
+        article.delete()
+        return Response({"massege" : "삭제 성공"},status=status.HTTP_200_OK)
