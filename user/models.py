@@ -73,6 +73,17 @@ class User(BaseModel, AbstractBaseUser):
     def is_staff(self):
         return self.is_admin
 
+class UserProfile(models.Model):
+    gender_choice = (
+        ('1', '남자'),
+        ('2', '여자'),
+    )
+    username = models.OneToOneField(User, verbose_name="유저", on_delete=models.CASCADE)
+    birthday = models.DateField("생년월일", blank=True, null=True)
+    gender = models.CharField("성별", max_length=5, choices=gender_choice, null=True, blank=True)
+    is_active= models.BooleanField("공개여부", default=True)
+
+
 
 class UserFollowing(models.Model):
     user_id = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
@@ -80,19 +91,19 @@ class UserFollowing(models.Model):
     created_at= models.DateTimeField(auto_now_add=True)
 
 class PetProfile(BaseModel):
-    choice_type = (
+    type_choice = (
         ('1', '강아지'),
         ('2', '고양이'),
         ('3', '기타'),
     )
 
-    choice_gender = (
+    gender_choice = (
         ('1', '여자'),
         ('2', '남자'),
         ('3', '모름'),
     )
 
-    choice_size = (
+    size_choice = (
         ('1', '소형'),
         ('2', '중형'),
         ('3', '대형'),
@@ -100,9 +111,9 @@ class PetProfile(BaseModel):
     user = models.ForeignKey(User, related_name="보호자", on_delete=models.CASCADE)
     name = models.CharField("이름", max_length=20)
     birthday = models.DateField("생년월일", blank=True, null=True)
-    type = models.CharField("종류", max_length=5, choices=choice_type)
-    gender = models.CharField("성별", max_length=5, choices=choice_gender, default='3')
-    size = models.CharField("사이즈", max_length=5, choices=choice_size)
+    type = models.CharField("종류", max_length=5, choices=type_choice)
+    gender = models.CharField("성별", max_length=5, choices=gender_choice, default='3')
+    size = models.CharField("사이즈", max_length=5, choices=size_choice)
 
     def __str__(self):
         return f"{self.user.username}님의 {self.name}"

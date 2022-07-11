@@ -22,15 +22,6 @@ class UserView(APIView):
             return Response(user_serializer.data, status=status.HTTP_200_OK)
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# 로그인 기능
-class TokenObtainPairView(TokenObtainPairView):
-    serializer_class = TokenObtainPairSerializer
-
-# 사용자 정보 조회//수정
-class OnlyAuthenticatedUserView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    # authentication_classes=[JWTAuthentication]
-    
     def get(self, request):
         if request. user:
             user_serializer = UserSerializer(request.user).data
@@ -39,6 +30,15 @@ class OnlyAuthenticatedUserView(APIView):
             return Response(user_serializer, status=status.HTTP_200_OK)
         return Response({"error": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
+# 로그인 기능
+class TokenObtainPairView(TokenObtainPairView):
+    serializer_class = TokenObtainPairSerializer
+
+# 수정
+class OnlyAuthenticatedUserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
+    
     def put(self, request, obj_id):
         user = User.objects.get(id=obj_id)
         if request.user != user:
