@@ -3,7 +3,7 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 
 from .serializers_jwt import TokenObtainPairSerializer
-from .serializers import UserSerializer, PetProfileSerializer
+from .serializers import UserProfileSerializer, UserSerializer, PetProfileSerializer
 
 from .models import User, UserFollowing, PetProfile
 
@@ -16,10 +16,30 @@ class UserView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
+        request.user
         user_serializer=UserSerializer(data=request.data)
-        if user_serializer.is_valid():
+        
+        print("*********************")
+        print(user_serializer)
+        print(user_serializer.is_valid())
+
+        if user_serializer.is_valid() :
             user_serializer.save()
-            return Response(user_serializer.data, status=status.HTTP_200_OK)
+            request.data['username']=User.objects.get(username = request.data['username'])
+            # request.data['username_id']=User.objects.get(username = request.data['username']).id
+            user_profile_serializer=UserProfileSerializer(data=request.data)
+            print("*********************")
+            print(user_profile_serializer)
+            print(user_profile_serializer.is_valid())
+            if user_profile_serializer.is_valid():
+                user_profile_serializer.save()
+            
+                return Response(user_serializer.data, status=status.HTTP_200_OK)
+        
+        # if user_serializer.is_valid():
+        # #     user_serializer.save()
+        # return Response(user_serializer.data, status=status.HTTP_200_OK)
+            
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
