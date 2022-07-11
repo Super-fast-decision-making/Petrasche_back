@@ -72,3 +72,26 @@ class PetView(APIView):
         pets = PetProfile.objects.filter(user=user)
         serializer = PetProfileSerializer(pets, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        user = request.user
+        request.data['user'] = user.id
+        print(request.data)
+        serializer=PetProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        pet = PetProfile.objects.get(pk=pk)
+        serializer = PetProfileSerializer(pet, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        pet = PetProfile.objects.get(pk=pk)
+        pet.delete()
+        return Response({"massege" : "삭제 성공"},status=status.HTTP_200_OK)

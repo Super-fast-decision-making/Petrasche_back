@@ -99,7 +99,7 @@ class PetProfile(BaseModel):
     )
     user = models.ForeignKey(User, related_name="보호자", on_delete=models.CASCADE)
     name = models.CharField("이름", max_length=20)
-    birthday = models.DateField(blank=True, null=True)
+    birthday = models.DateField("생년월일", blank=True, null=True)
     type = models.CharField("종류", max_length=5, choices=choice_type)
     gender = models.CharField("성별", max_length=5, choices=choice_gender, default='3')
     size = models.CharField("사이즈", max_length=5, choices=choice_size)
