@@ -3,9 +3,9 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 
 from .serializers_jwt import TokenObtainPairSerializer
-from .serializers import UserSerializer
+from .serializers import UserSerializer, PetProfileSerializer
 
-from .models import User, UserFollowing
+from .models import User, UserFollowing, PetProfile
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -64,3 +64,11 @@ class UserFollowingView(APIView):
         new_follow.delete()
         return Response({"message":"언.팔.로.우"}, status=status.HTTP_200_OK)
 
+class PetView(APIView):
+    authentication_classes=[JWTAuthentication]
+
+    def get(self, request):
+        user = request.user
+        pets = PetProfile.objects.filter(user=user)
+        serializer = PetProfileSerializer(pets, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
