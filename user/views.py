@@ -16,47 +16,9 @@ from django.core.exceptions import ValidationError
 class UserView(APIView):
     permission_classes = [permissions.AllowAny]
 
-    def post(self, request):
-        request.user
-        user_serializer=UserSerializer(data=request.data)
-        
-        print("*********************")
-        print(user_serializer)
-        print(user_serializer.is_valid())
-
-        if user_serializer.is_valid() :
-            user_serializer.save()
-            request.data.pop('email')
-            request.data.pop('password')
-
-            request.data['username']=User.objects.get(username = request.data['username'])
-            user_profile_serializer=UserProfileSerializer(data=request.data)
-
-            print("*********************")
-            print(user_profile_serializer)
-            print(user_profile_serializer.is_valid())
-            try:
-                user_profile_serializer.is_valid()
-                print(ValidationError)
-
-            except ValidationError:
-                print(ValidationError)
-
-
-            # if user_profile_serializer.is_valid():
-            #     user_profile_serializer.save()
-            
-                return Response(user_serializer.data, status=status.HTTP_200_OK)
-        
-        # if user_serializer.is_valid():
-        # #     user_serializer.save()
-        # return Response(user_serializer.data, status=status.HTTP_200_OK)
-            
-        return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
     def get(self, request):
         if request. user:
+
             user_serializer = UserSerializer(request.user).data
             user_serializer['followers'] = UserFollowing.objects.filter(following_user_id=request.user).count() # 나를 팔로우 하는 사람 수
             user_serializer['followings'] = UserFollowing.objects.filter(user_id=request.user).count() # 내가 팔로우 하는 사람 수
@@ -64,20 +26,26 @@ class UserView(APIView):
         return Response({"error": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+    def post(self, request):
+        request.user
+        user_serializer=UserSerializer(data=request.data)
+
+        if user_serializer.is_valid() :
+            user_serializer.save()
+
+            request.data['username']=User.objects.get(username = request.data['username']).pk            
+            user_profile_serializer=UserProfileSerializer(data=request.data)
+
+            if user_profile_serializer.is_valid():
+                user_profile_serializer.save()
+
+                return Response(user_serializer.data, status=status.HTTP_200_OK)
+        return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-###########테스트##############
-class UserProfileView(APIView):
-    def post(self,request):
-        request.data['username']=User.objects.get(username = request.data['username'])
-        user_profile_serializer=UserProfileSerializer(data=request.data)
-        if user_profile_serializer.is_valid():
-            user_profile_serializer.save()
-            return Response(user_profile_serializer, status=status.HTTP_200_OK)
-        return Response(user_profile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-##############################
+
 
 # 로그인 기능
 class TokenObtainPairView(TokenObtainPairView):
