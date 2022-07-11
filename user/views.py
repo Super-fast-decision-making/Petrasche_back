@@ -3,7 +3,7 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 
 from .serializers_jwt import TokenObtainPairSerializer
-from .serializers import UserSerializer, PetProfileSerializer
+from .serializers import UserProfileSerializer, UserSerializer, PetProfileSerializer
 
 from .models import User, UserFollowing, PetProfile
 
@@ -16,21 +16,32 @@ class UserView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
+        request.user
         user_serializer=UserSerializer(data=request.data)
-        if user_serializer.is_valid():
+        
+        print("*********************")
+        print(user_serializer)
+        print(user_serializer.is_valid())
+
+        if user_serializer.is_valid() :
             user_serializer.save()
-            return Response(user_serializer.data, status=status.HTTP_200_OK)
+            request.data['username']=User.objects.get(username = request.data['username'])
+            # request.data['username_id']=User.objects.get(username = request.data['username']).id
+            user_profile_serializer=UserProfileSerializer(data=request.data)
+            print("*********************")
+            print(user_profile_serializer)
+            print(user_profile_serializer.is_valid())
+            if user_profile_serializer.is_valid():
+                user_profile_serializer.save()
+            
+                return Response(user_serializer.data, status=status.HTTP_200_OK)
+        
+        # if user_serializer.is_valid():
+        # #     user_serializer.save()
+        # return Response(user_serializer.data, status=status.HTTP_200_OK)
+            
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# 로그인 기능
-class TokenObtainPairView(TokenObtainPairView):
-    serializer_class = TokenObtainPairSerializer
-
-# 사용자 정보 조회//수정
-class OnlyAuthenticatedUserView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    # authentication_classes=[JWTAuthentication]
-    
     def get(self, request):
         if request. user:
             user_serializer = UserSerializer(request.user).data
@@ -39,6 +50,15 @@ class OnlyAuthenticatedUserView(APIView):
             return Response(user_serializer, status=status.HTTP_200_OK)
         return Response({"error": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
+# 로그인 기능
+class TokenObtainPairView(TokenObtainPairView):
+    serializer_class = TokenObtainPairSerializer
+
+# 수정
+class OnlyAuthenticatedUserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
+    
     def put(self, request, obj_id):
         user = User.objects.get(id=obj_id)
         if request.user != user:
