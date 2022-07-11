@@ -1,11 +1,10 @@
-from urllib.parse import urlunparse
+from django.contrib import admin
 from django.urls import path
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from user import views
 
 urlpatterns = [
-    path('login/', TokenObtainPairView.as_view(), name='login'),
+    path('', views.UserView.as_view()),
+    path('login/', views.TokenObtainPairView.as_view(), name='patrasche_token'),
+    path('follow/', views.UserFollowingView.as_view()),
     path('refresh/', TokenRefreshView.as_view(), name='refresh'),
 ]

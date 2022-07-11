@@ -39,9 +39,8 @@ class User(BaseModel, AbstractBaseUser):
     username = models.CharField("닉네임", max_length=20, unique=True)
     password = models.CharField("패스워드", max_length=128)
     email = models.EmailField("이메일", max_length=100, default='', unique=True)
-    latitude = models.FloatField("위도", default=0.0)
-    longitude = models.FloatField("경도", default=0.0)
-
+    latitude = models.FloatField("위도", default=0.0, null=True)
+    longitude = models.FloatField("경도", default=0.0, null=True)
     is_active = models.BooleanField(default=True)
 
     # is_staff에서 해당 값 사용
@@ -73,3 +72,9 @@ class User(BaseModel, AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
+
+
+class UserFollowing(models.Model):
+    user_id = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
+    following_user_id = models.ForeignKey(User, related_name="followers", on_delete=models.CASCADE)
+    created_at= models.DateTimeField(auto_now_add=True)
