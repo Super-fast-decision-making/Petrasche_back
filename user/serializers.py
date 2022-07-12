@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User,  PetProfile, UserProfile
+from .models import User, PetProfile, UserProfile
 
 EMAIL = ("@naver.com", "@gmail.com", "@kakao.com")
 
@@ -21,22 +21,33 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
+    gender_choice = serializers.IntegerField(write_only=True, required=False)
+    birthday_date = serializers.DateField(write_only=True, required=False)
+    is_active_val = serializers.BooleanField(write_only=True, required=False)
 
+    gender = serializers.SerializerMethodField()
+    birthday = serializers.SerializerMethodField()
+    show_active = serializers.SerializerMethodField()
 
-    # gender = serializers.SerializerMethodField()
-    # def get_gender(self,obj):
-    #     return obj.userprofile.gender
+    def get_gender(self, obj):
+        try:
+            return obj.userprofile.gender
+        except:
+            return f'없음'
     
-    # birthday = serializers.SerializerMethodField()
-    # def get_birthday(self,obj):
-    #     return obj.userprofile.birthday
+    def get_birthday(self, obj):
+        try:
+            return obj.userprofile.birthday
+        except:
+            return f'없음'
 
-    # show_profile = serializers.SerializerMethodField()
-    # def get_show_profile(self,obj):
-    #      return obj.userprofile.is_active
+    def show_active(self,obj):
+        try:
+            return obj.userprofile.is_active
+        except:
+            return f'없음'
+
     
-
-
     # def validate(self, data):
 
     #     if not data.get("email", "").endswith(EMAIL):
@@ -48,17 +59,25 @@ class UserSerializer(serializers.ModelSerializer):
     #             detail={"error": "password의 길이는 6자리 이상이어야 합니다."}
     #         )
 
-
     def create(self, validated_data):
+        gender_choice = validated_data.pop("gender_choice")
+        birthday_date = validated_data.pop("birthday_date")
+        is_active_val = validated_data.pop("is_active_val")
         password = validated_data.pop("password")
         user = User(**validated_data)
         user.set_password(password)
         user.save()
+        UserProfile.objects.create(
+            user=user,
+            gender=gender_choice,
+            birthday=birthday_date,
+            is_active=is_active_val,
+        )
         return user
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'created_at', 'updated_at','latitude', 'longitude', ]
+        fields = '__all__'
 
         extra_kwargs = {
             'password': {'write_only': True},
@@ -67,3 +86,4 @@ class UserSerializer(serializers.ModelSerializer):
                 'required': False
             },
         }
+
