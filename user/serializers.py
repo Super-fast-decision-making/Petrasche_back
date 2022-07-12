@@ -49,11 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
         except:
             return f'입력해주세요'
 
-    # thisismypetprofile = PetProfileSerializer(many=True, source="petprofile_set", read_only=True)  # 역참조 
-    # print('thisismypetprofile: ', thisismypetprofile)
-    # def get_thisismypetprofile(self,thisismypetprofile):
-    #     return thisismypetprofile
-    # def validate(self, data):
+
 
     #     if not data.get("email", "").endswith(EMAIL):
     #         raise serializers.ValidationError(
@@ -65,6 +61,8 @@ class UserSerializer(serializers.ModelSerializer):
     #         )
 
     def create(self, validated_data):
+        print("***************")
+        print('validated_data:', validated_data)
         gender_choice = validated_data.pop("gender_choice")
         birthday_date = validated_data.pop("birthday_date")
         is_active_val = validated_data.pop("is_active_val")
@@ -83,7 +81,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # fields = '__all__'
-        fields =  ['id', 'username', 'email', 'gender', 'birthday', 'last_login', 'updated_at', 'created_at', 'latitude', 'longitude', 'petprofile', 'birthday_date', 'gender_choice', 'is_active_val']
+        fields =  ['id', 'password', 'username', 'email', 'gender', 'birthday', 'last_login', 'updated_at', 'created_at', 'latitude', 'longitude', 'petprofile', 'birthday_date', 'gender_choice', 'is_active_val']
 
         extra_kwargs = {
             'password': {'write_only': True},
