@@ -33,7 +33,7 @@ class UserView(APIView):
         if user_serializer.is_valid() :
             user_serializer.save()
 
-            request.data['username']=User.objects.get(username = request.data['username']).pk            
+            request.data['username']=User.objects.get(username = request.data['username']).pk     #시간차..   
             user_profile_serializer=UserProfileSerializer(data=request.data)
 
             if user_profile_serializer.is_valid():
