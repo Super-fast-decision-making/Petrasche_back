@@ -27,20 +27,24 @@ class UserView(APIView):
 
 
     def post(self, request):
-        request.user
         user_serializer=UserSerializer(data=request.data)
-
-        if user_serializer.is_valid() :
+        if user_serializer.is_valid():
             user_serializer.save()
-
-            request.data['username']=User.objects.get(username = request.data['username']).pk            
-            user_profile_serializer=UserProfileSerializer(data=request.data)
-
-            if user_profile_serializer.is_valid():
-                user_profile_serializer.save()
-
-                return Response(user_serializer.data, status=status.HTTP_200_OK)
+            return Response(user_serializer.data, status=status.HTTP_200_OK)
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+        # if user_serializer.is_valid() :  #일반 유저 회원가입
+        #     user_serializer.save()
+
+        #     request.data['username']=User.objects.get(username = request.data['username']).pk     #시간차..   
+        #     user_profile_serializer=UserProfileSerializer(data=request.data)
+
+        #     if user_profile_serializer.is_valid(): ##해당 유저의 프로필 저장
+        #         user_profile_serializer.save()
+
+                # return Response(user_serializer.data, status=status.HTTP_200_OK)
+        # return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
