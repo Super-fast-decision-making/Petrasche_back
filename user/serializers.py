@@ -49,10 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
         except:
             return f'입력해주세요'
 
-    def validate(self, data):
 
-        
-        return data
 
     #     if not data.get("email", "").endswith(EMAIL):
     #         raise serializers.ValidationError(
