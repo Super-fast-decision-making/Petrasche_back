@@ -20,6 +20,7 @@ class UserView(APIView):
         if request. user:
 
             user_serializer = UserSerializer(request.user).data
+            # print(user_serializer)
             user_serializer['followers'] = UserFollowing.objects.filter(following_user_id=request.user).count() # 나를 팔로우 하는 사람 수
             user_serializer['followings'] = UserFollowing.objects.filter(user_id=request.user).count() # 내가 팔로우 하는 사람 수
             return Response(user_serializer, status=status.HTTP_200_OK)
