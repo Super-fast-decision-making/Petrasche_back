@@ -20,6 +20,7 @@ class UserView(APIView):
         if request. user:
 
             user_serializer = UserSerializer(request.user).data
+            # print(user_serializer)
             user_serializer['followers'] = UserFollowing.objects.filter(following_user_id=request.user).count() # 나를 팔로우 하는 사람 수
             user_serializer['followings'] = UserFollowing.objects.filter(user_id=request.user).count() # 내가 팔로우 하는 사람 수
             return Response(user_serializer, status=status.HTTP_200_OK)
@@ -32,24 +33,6 @@ class UserView(APIView):
             user_serializer.save()
             return Response(user_serializer.data, status=status.HTTP_200_OK)
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-        # if user_serializer.is_valid() :  #일반 유저 회원가입
-        #     user_serializer.save()
-
-        #     request.data['username']=User.objects.get(username = request.data['username']).pk     #시간차..   
-        #     user_profile_serializer=UserProfileSerializer(data=request.data)
-
-        #     if user_profile_serializer.is_valid(): ##해당 유저의 프로필 저장
-        #         user_profile_serializer.save()
-
-                # return Response(user_serializer.data, status=status.HTTP_200_OK)
-        # return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
 
 # 로그인 기능
 class TokenObtainPairView(TokenObtainPairView):

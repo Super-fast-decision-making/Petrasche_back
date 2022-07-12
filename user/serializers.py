@@ -21,6 +21,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
+    petprofile = PetProfileSerializer(many=True, source="parent", read_only=True)  # 역참조 
+
     gender_choice = serializers.IntegerField(write_only=True, required=False)
     birthday_date = serializers.DateField(write_only=True, required=False)
     is_active_val = serializers.BooleanField(write_only=True, required=False)
@@ -33,21 +35,24 @@ class UserSerializer(serializers.ModelSerializer):
         try:
             return obj.userprofile.gender
         except:
-            return f'없음'
+            return f'입력해주세요'
     
     def get_birthday(self, obj):
         try:
             return obj.userprofile.birthday
         except:
-            return f'없음'
+            return f'입력해주세요'
 
     def show_active(self,obj):
         try:
             return obj.userprofile.is_active
         except:
-            return f'없음'
+            return f'입력해주세요'
 
-    
+    # thisismypetprofile = PetProfileSerializer(many=True, source="petprofile_set", read_only=True)  # 역참조 
+    # print('thisismypetprofile: ', thisismypetprofile)
+    # def get_thisismypetprofile(self,thisismypetprofile):
+    #     return thisismypetprofile
     # def validate(self, data):
 
     #     if not data.get("email", "").endswith(EMAIL):
@@ -77,7 +82,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
+        # fields = '__all__'
+        fields =  ['id', 'username', 'email', 'gender', 'birthday', 'last_login', 'updated_at', 'created_at', 'latitude', 'longitude', 'petprofile', 'birthday_date', 'gender_choice', 'is_active_val']
 
         extra_kwargs = {
             'password': {'write_only': True},
