@@ -50,8 +50,8 @@ class UserSerializer(serializers.ModelSerializer):
             return f'입력해주세요'
 
     def validate(self, data):
-        print(data)
-        print("***************")
+
+        
         return data
 
     #     if not data.get("email", "").endswith(EMAIL):
@@ -64,7 +64,8 @@ class UserSerializer(serializers.ModelSerializer):
     #         )
 
     def create(self, validated_data):
-        print(validated_data)
+        print("***************")
+        print('validated_data:', validated_data)
         gender_choice = validated_data.pop("gender_choice")
         birthday_date = validated_data.pop("birthday_date")
         is_active_val = validated_data.pop("is_active_val")
