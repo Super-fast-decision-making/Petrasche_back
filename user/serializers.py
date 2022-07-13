@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import User, PetProfile, UserProfile
+from article.models import Article
+from article.serializers import ArticleSerializer
+
 
 EMAIL = ("@naver.com", "@gmail.com", "@kakao.com")
 
@@ -22,6 +25,24 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     petprofile = PetProfileSerializer(many=True, source="parent", read_only=True)  # 역참조 
+    # articles = ArticleSerializer(many=True, source="article_set", read_only=True)  # 역참조 
+    like_articles = serializers.SerializerMethodField()
+
+    def get_like_articles(self, obj):
+        # print('article_likes', article_likes)
+        # print(obj.id)
+       article_likes =Article.objects.filter(like=obj.id)
+       article_list = []
+       for article in article_likes:
+        doc = {
+            'content': article.content
+            
+        }
+        article_list.append(doc)     
+
+
+        return article_list
+    
 
     gender_choice = serializers.IntegerField(write_only=True, required=False)
     birthday_date = serializers.DateField(write_only=True, required=False)
@@ -81,7 +102,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # fields = '__all__'
-        fields =  ['id', 'password', 'username', 'email', 'gender', 'birthday', 'last_login', 'updated_at', 'created_at', 'latitude', 'longitude', 'petprofile', 'birthday_date', 'gender_choice', 'is_active_val']
+        fields =  ['id', 'password', 'username', 'email', 'gender', 'birthday', 'last_login', 'updated_at', 'created_at', 'latitude', 'longitude', 'petprofile', 'birthday_date', 'gender_choice', 'is_active_val', 'like_articles']
 
         extra_kwargs = {
             'password': {'write_only': True},

@@ -60,3 +60,10 @@ class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes']
+
+
+# class  LikeSerailzier(serializers.ModelSerializer):
+#     articles = ArticleSerializer(many=True, read_only=True, source='article_set')
+#     class Meta:
+#         model = Like
+#         fields = '__all__'
