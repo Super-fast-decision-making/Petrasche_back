@@ -17,8 +17,7 @@ class UserView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        if request. user:
-
+        if request.user:
             user_serializer = UserSerializer(request.user).data
             # print(user_serializer)
             user_serializer['followers'] = UserFollowing.objects.filter(following_user_id=request.user).count() # 나를 팔로우 하는 사람 수
