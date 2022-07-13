@@ -31,14 +31,14 @@ class UserSerializer(serializers.ModelSerializer):
     def get_like_articles(self, obj):
         # print('article_likes', article_likes)
         # print(obj.id)
-       article_likes =Article.objects.filter(like=obj.id)
-       article_list = []
-       for article in article_likes:
-        doc = {
-            'content': article.content,
-            'author':article.user.username
-        }
-        article_list.append(doc)     
+        article_likes =Article.objects.filter(like=obj.id)
+        article_list = []
+        for article in article_likes:
+            doc = {
+                'content': article.content,
+                'author':article.user.username
+            }
+            article_list.append(doc)     
 
 
         return article_list
