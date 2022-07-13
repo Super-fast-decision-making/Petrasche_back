@@ -44,6 +44,13 @@ class OnlyAuthenticatedUserView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes=[JWTAuthentication]
     
+    def get(self, request):
+		# Token에서 인증된 user만 가져옴
+        user = request.user
+        if not user:
+            return Response({"error": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(UserSerializer(request.user).data)
+    
     def put(self, request, obj_id):
         user = User.objects.get(id=obj_id)
         if request.user != user:
