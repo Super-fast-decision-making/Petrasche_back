@@ -35,8 +35,8 @@ class UserSerializer(serializers.ModelSerializer):
        article_list = []
        for article in article_likes:
         doc = {
-            'content': article.content
-            
+            'content': article.content,
+            'author':article.user.username
         }
         article_list.append(doc)     
 
