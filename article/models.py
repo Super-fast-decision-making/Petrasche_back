@@ -23,4 +23,4 @@ class Comment(BaseModel):
     comment = models.TextField("댓글 내용")
 
     def __str__(self):
-        return f"{self.user.username} 님 댓글입니다."
+        return f"{self.user} 님 댓글입니다."

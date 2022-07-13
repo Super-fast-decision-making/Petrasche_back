@@ -9,10 +9,9 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
-
-    def get_user(self, obj):
-        return obj.user.username
+    # user = serializers.SerializerMethodField()
+    # def get_user(self, obj):
+    #     return obj.user.username
 
     class Meta:
         model = Comment
