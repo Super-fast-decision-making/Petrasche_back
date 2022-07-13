@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import User, PetProfile, UserProfile
-from article.models import Article
+from article.models import Article, Image
 from article.serializers import ArticleSerializer
 
 
@@ -29,14 +29,17 @@ class UserSerializer(serializers.ModelSerializer):
     like_articles = serializers.SerializerMethodField()
 
     def get_like_articles(self, obj):
-        # print('article_likes', article_likes)
-        # print(obj.id)
+
         article_likes =Article.objects.filter(like=obj.id)
         article_list = []
         for article in article_likes:
+            images = Image.objects.filter(article=article)
             doc = {
+                'id': article.id,
                 'content': article.content,
-                'author':article.user.username
+                'author':article.user.username,
+                'imgurl': [img.imgurl for img  in images]
+
             }
             article_list.append(doc)     
 
