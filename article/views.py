@@ -23,6 +23,12 @@ class ArticleView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class ArticleDetailView(APIView):
+    def get(self, request, pk):
+        article = Article.objects.get(pk=pk)
+        serializer = ArticleSerializer(article)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 class CommentView(APIView):
     def get(self, request, pk):
         comments = Comment.objects.filter(article=pk)
