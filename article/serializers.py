@@ -23,6 +23,10 @@ class ArticleSerializer(serializers.ModelSerializer):
     like_num = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
     image_lists = serializers.ListField(write_only=True, required=False)
+    author = serializers.SerializerMethodField()
+
+    def get_author(self,obj):
+        return obj.user.username
 
     def get_likes(self, obj):
         return [like.username for like in obj.like.all()]
@@ -56,7 +60,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num']
+        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author']
 
 
 # class  LikeSerailzier(serializers.ModelSerializer):
