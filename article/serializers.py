@@ -20,20 +20,18 @@ class CommentSerializer(serializers.ModelSerializer):
 class ArticleSerializer(serializers.ModelSerializer):
     comment = CommentSerializer(many=True, read_only=True, source='comment_set')
     likes = serializers.SerializerMethodField()
+    like_num = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
     image_lists = serializers.ListField(write_only=True, required=False)
 
     def get_likes(self, obj):
-        like_lists = []
-        for like in obj.like.all():
-            like_lists.append(like.username)
-        return like_lists
+        return [like.username for like in obj.like.all()]
+
+    def get_like_num(self,obj):
+        return  obj.like.all().count()
 
     def get_images(self, obj):
-        imgurls = []
-        for image in obj.image_set.all():
-            imgurls.append(image.imgurl)
-        return imgurls
+        return [image.imgurl for image in obj.image_set.all()]
 
     def create(self, validated_data):
         image_lists = validated_data.pop('image_lists')
@@ -58,7 +56,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes']
+        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num']
 
 
 # class  LikeSerailzier(serializers.ModelSerializer):
