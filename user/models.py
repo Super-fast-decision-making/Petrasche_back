@@ -1,10 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.core.validators import RegexValidator
+from django.conf import settings
+from pytz import timezone
 
 class BaseModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def created_at_korean_time(self):
+        korean_timezone = timezone(settings.TIME_ZONE)
+        return self.created_at.astimezone(korean_timezone)
 
     class Meta:
         abstract = True #abstractbaseclass가 되도록

@@ -25,8 +25,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     petprofile = PetProfileSerializer(many=True, source="parent", read_only=True)  # 역참조 
+    # userprofile = UserProfileSerializer(many=True, source="userprofile_set", read_only=True)  # 역참조 
     # articles = ArticleSerializer(many=True, source="article_set", read_only=True)  # 역참조 
     like_articles = serializers.SerializerMethodField()
+    phone_num = serializers.SerializerMethodField()
+
+    def get_phone_num(self,obj):
+        print("****************")
+        print(obj)
+        print(obj.userprofile)
+        print(obj.userprofile.phone)
+        return obj.userprofile.phone
 
     def get_like_articles(self, obj):
 
@@ -87,8 +96,7 @@ class UserSerializer(serializers.ModelSerializer):
     #         )
 
     def create(self, validated_data):
-        print("***************")
-        print('validated_data:', validated_data)
+
         gender_choice = validated_data.pop("gender_choice")
         birthday_date = validated_data.pop("birthday_date")
         is_active_val = validated_data.pop("is_active_val")
@@ -107,7 +115,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # fields = '__all__'
-        fields =  ['id', 'password', 'username', 'email', 'gender', 'birthday', 'last_login', 'updated_at', 'created_at', 'latitude', 'longitude', 'petprofile', 'birthday_date', 'gender_choice', 'is_active_val', 'like_articles']
+        fields =  ['id', 'password', 'username', 'email', 'gender', 'birthday', 'last_login', 'updated_at', 'created_at', 'latitude', 'longitude', 'petprofile', 'birthday_date', 'gender_choice', 'is_active_val', 'like_articles','phone_num' ]
 
         extra_kwargs = {
             'password': {'write_only': True},

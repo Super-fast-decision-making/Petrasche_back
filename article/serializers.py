@@ -2,6 +2,7 @@ from asyncore import write
 from rest_framework import serializers
 from article.models import Article, Image, Comment
 from article.s3upload import upload as s3
+from datetime import datetime
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,10 +11,27 @@ class ImageSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
+    date = serializers.SerializerMethodField()
+    
     def get_username(self, obj):
         if obj.user:
             return obj.user.username
         return "삭제된 사용자"
+
+    def get_date(self, obj):
+        time = datetime.now()
+        print(obj.created_at.date())
+        print(time.date())
+        print(type(obj.created_at.date()))
+        print(obj.created_at.date()==time.date())
+        print(obj.create_at.time())
+        # if obj.created_at.date()==time.date():
+        #     print (time.hour)
+        #     print(obj.created_at.time())
+            # print(int(time.hour()) - int(obj.create_at.hour()))
+            # return str(time.hour() - obj.create_at.hour())+ "시간 전"
+
+        return f'대충 date'
 
     class Meta:
         model = Comment
