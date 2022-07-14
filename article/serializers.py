@@ -11,7 +11,10 @@ class ImageSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     def get_user(self, obj):
-        return obj.user.username
+        try:
+            return obj.user.username
+        except:
+            return f'없음'
 
     class Meta:
         model = Comment
