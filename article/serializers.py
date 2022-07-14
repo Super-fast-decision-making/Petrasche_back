@@ -9,9 +9,11 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
-    def get_user(self, obj):
-        return obj.user.username
+    username = serializers.SerializerMethodField()
+    def get_username(self, obj):
+        if obj.user:
+            return obj.user.username
+        return "삭제된 사용자"
 
     class Meta:
         model = Comment
