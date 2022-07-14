@@ -1,14 +1,26 @@
-from turtle import Turtle
 from django.db import models
-from django.dispatch import receiver
+from user.models import User
 # Create your models here.
 
+
+
+class Channel(models.Model):
+    name = models.CharField(unique=True, max_length=120)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    image_url = models.URLField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Message(models.Model):
-    sender = models.ForeignKey('user.User', related_name="sent_messanges", on_delete=models.CASCADE)
-    receiver = models.ForeignKey('user.User', related_name="received_messages", on_delete=models.CASCADE)
-    message = models.TextField()
-    seen = models.BooleanField(default=False)
-    date_created = models.DateTimeField(auto_now_add=True)
-    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    channel = models.ForeignKey(Channel, on_delete=models.CASCADE)
+    message = models.CharField(max_length=200)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user.username} said {self.message}'
+
     class Meta:
-        ordering = ("date_created",)
+        ordering = ['timestamp']
