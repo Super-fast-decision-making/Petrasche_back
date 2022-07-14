@@ -51,8 +51,8 @@ class OnlyAuthenticatedUserView(APIView):
             return Response({"error": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(UserSerializer(request.user).data)
     
-    def put(self, request, obj_id):
-        user = User.objects.get(id=obj_id)
+    def put(self, request, pk):
+        user = User.objects.get(id=pk)
         if request.user != user:
             return Response({"error": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
         user_serializer = UserSerializer(user, request.data, partial=True)
