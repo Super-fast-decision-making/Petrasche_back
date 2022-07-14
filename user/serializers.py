@@ -31,10 +31,6 @@ class UserSerializer(serializers.ModelSerializer):
     phone_num = serializers.SerializerMethodField()
 
     def get_phone_num(self,obj):
-        print("****************")
-        print(obj)
-        print(obj.userprofile)
-        print(obj.userprofile.phone)
         return obj.userprofile.phone
 
     def get_like_articles(self, obj):

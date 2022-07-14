@@ -87,7 +87,9 @@ class PetView(APIView):
 
     def post(self, request):
         user = request.user
+
         request.data['user'] = user.id
+
         print(request.data)
         serializer=PetProfileSerializer(data=request.data)
         if serializer.is_valid():
