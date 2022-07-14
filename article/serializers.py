@@ -20,18 +20,16 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_date(self, obj):
         time = datetime.now()
-        print(obj.created_at.date())
-        print(time.date())
-        print(type(obj.created_at.date()))
-        print(obj.created_at.date()==time.date())
-        print(obj.create_at.time())
-        # if obj.created_at.date()==time.date():
-        #     print (time.hour)
-        #     print(obj.created_at.time())
-            # print(int(time.hour()) - int(obj.create_at.hour()))
-            # return str(time.hour() - obj.create_at.hour())+ "시간 전"
-
-        return f'대충 date'
+        if (obj.created_at.date()==time.date()) and (obj.created_at.hour==time.hour):
+            return str(time.minute-obj.created_at.minute)+" 분 전 "
+        elif obj.created_at.date()==time.date():
+            return str(time.hour-obj.created_at.hour)+" 시간 전"
+        elif obj.created_at.month==time.month:
+            return  str(time.day-obj.created_at.day) + " 일 전"
+        elif obj.created_at.year ==time.year:
+            return str(time.month-obj.created_at.month) + " 달 전"
+        else:
+            return obj.created_at
 
     class Meta:
         model = Comment
@@ -44,6 +42,8 @@ class ArticleSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
     image_lists = serializers.ListField(write_only=True, required=False)
     author = serializers.SerializerMethodField()
+    date = serializers.SerializerMethodField()
+
 
     def get_author(self,obj):
         return obj.user.username
@@ -56,6 +56,19 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     def get_images(self, obj):
         return [image.imgurl for image in obj.image_set.all()]
+
+    def get_date(self, obj):
+        time = datetime.now()
+        if (obj.created_at.date()==time.date()) and (obj.created_at.hour==time.hour):
+            return str(time.minute-obj.created_at.minute)+" 분 전 "
+        elif obj.created_at.date()==time.date():
+            return str(time.hour-obj.created_at.hour)+" 시간 전"
+        elif obj.created_at.month==time.month:
+            return  str(time.day-obj.created_at.day) + " 일 전"
+        elif obj.created_at.year ==time.year:
+            return str(time.month-obj.created_at.month) + " 달 전"
+        else:
+            return obj.created_at
 
     def create(self, validated_data):
         image_lists = validated_data.pop('image_lists')
@@ -80,7 +93,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author']
+        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author', 'date']
 
 
 # class  LikeSerailzier(serializers.ModelSerializer):
