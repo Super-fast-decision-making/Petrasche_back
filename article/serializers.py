@@ -21,13 +21,13 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_date(self, obj):
         time = datetime.now()
         if (obj.created_at.date()==time.date()) and (obj.created_at.hour==time.hour):
-            return str(time.minute-obj.created_at.minute)+" 분 전 "
+            return str(time.minute-obj.created_at.minute)+"분전"
         elif obj.created_at.date()==time.date():
-            return str(time.hour-obj.created_at.hour)+" 시간 전"
+            return str(time.hour-obj.created_at.hour)+"시간전"
         elif obj.created_at.month==time.month:
-            return  str(time.day-obj.created_at.day) + " 일 전"
+            return  str(time.day-obj.created_at.day) + "일전"
         elif obj.created_at.year ==time.year:
-            return str(time.month-obj.created_at.month) + " 달 전"
+            return str(time.month-obj.created_at.month) + "달전"
         else:
             return obj.created_at
 
