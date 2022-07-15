@@ -44,7 +44,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_profile_img(self,obj):
         try:
-            return obj.userprofile.phone
+            return obj.userprofile.profile_img
         except:
             return f'https://cdn.pixabay.com/photo/2017/09/25/13/12/cocker-spaniel-2785074__480.jpg'
     
