@@ -110,8 +110,8 @@ class PetProfile(BaseModel):
     )
 
     gender_choice = (
-        ('1', '여자'),
-        ('2', '남자'),
+        ('1', '남자'),
+        ('2', '여자'),
         ('3', '모름'),
     )
 
@@ -126,6 +126,8 @@ class PetProfile(BaseModel):
     type = models.CharField("종류", max_length=5, choices=type_choice)
     gender = models.CharField("성별", max_length=5, choices=gender_choice, default='3')
     size = models.CharField("사이즈", max_length=5, choices=size_choice)
+    pet_profile_img = models.URLField("프로필 이미지", max_length=200, null=True, blank=True, default="https://cdn.pixabay.com/photo/2017/09/25/13/12/cocker-spaniel-2785074__480.jpg" )
+    article = models.ManyToManyField('article.Article', verbose_name="게시물")
 
     def __str__(self):
         return f"{self.user.username}님의 {self.name}"
