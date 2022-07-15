@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from .serializers_jwt import TokenObtainPairSerializer
 from .serializers import UserProfileSerializer, UserSerializer, PetProfileSerializer
 
-from .models import User, UserFollowing, PetProfile
+from .models import User, UserFollowing, PetProfile, UserProfile
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -55,11 +55,14 @@ class OnlyAuthenticatedUserView(APIView):
         user = User.objects.get(id=pk)
         if request.user != user:
             return Response({"error": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
-        user_serializer = UserSerializer(user, request.data, partial=True)
+        # request.data['user'] = user.id
+        userprofile = UserProfile.objects.get(user=user)
+        user_serializer = UserProfileSerializer(userprofile, data=request.data, partial=True)
+        print(user_serializer)
         if user_serializer.is_valid():
             user_serializer.save()
             return Response(user_serializer.data, status=status.HTTP_200_OK)
-        return Response(user_serializer.data, status=status.HTTP_400_BAD_REQUEST)
+        return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # 팔로우/언팔로우
