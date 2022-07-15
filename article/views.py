@@ -27,7 +27,7 @@ class ArticleView(APIView):
 class ArticleTopView(APIView):
     def get(self, request):
         articles = Article.objects.all()
-        top_articles = articles.annotate(like_count=Count('like')).order_by('-like_count')[:7]
+        top_articles = articles.annotate(like_count=Count('like')).annotate(comment_count=Count('comment')).order_by('-like_count')[:7]
         top_articles = ArticleSerializer(top_articles, many=True)
         return Response(top_articles.data, status=status.HTTP_200_OK)
 
