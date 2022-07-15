@@ -44,7 +44,7 @@ class UserManager(BaseUserManager):
 # Create your models here.
 class User(BaseModel, AbstractBaseUser):
     username = models.CharField("닉네임", max_length=20, unique=True)
-    password = models.CharField("패스워드", max_length=128)
+    password = models.CharField("패스워드", max_length=128, null=True)
     email = models.EmailField("이메일", max_length=100, default='', unique=True)
     latitude = models.FloatField("위도", default=0.0, null=True)
     longitude = models.FloatField("경도", default=0.0, null=True)
@@ -91,9 +91,9 @@ class UserProfile(models.Model):
     is_active= models.BooleanField("공개여부", default=True, null=True, blank=True)
     phoneNumberRegex = RegexValidator(regex = r'^01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})$')
     phone = models.CharField("폰 번호",validators = [phoneNumberRegex], max_length = 11, unique = True, null=True, blank=True)
-    introduction = models.TextField("자기 소개글", null=True, blank=True)
+    introduction = models.TextField("자기 소개글", null=True, blank=True, default="유저님의 마이 페이지입니다")
     address = models.TextField("주소", null=True, blank=True)
-    profile_img = models.URLField("프로필 이미지", max_length=200, null=True, blank=True )
+    profile_img = models.URLField("프로필 이미지", max_length=200, null=True, blank=True, default="https://cdn.pixabay.com/photo/2017/09/25/13/12/cocker-spaniel-2785074__480.jpg" )
 
 
 
