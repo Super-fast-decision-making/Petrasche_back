@@ -33,13 +33,26 @@ class UserSerializer(serializers.ModelSerializer):
     # articles = ArticleSerializer(many=True, source="article_set", read_only=True)  # 역참조 
     like_articles = serializers.SerializerMethodField()
     phone_num = serializers.SerializerMethodField()
+    profile_img = serializers.SerializerMethodField()
+    introduction = serializers.SerializerMethodField()
 
     def get_phone_num(self,obj):
-        print("****************")
-        print(obj)
-        print(obj.userprofile)
-        print(obj.userprofile.phone)
-        return obj.userprofile.phone
+        try:
+            return obj.userprofile.phone
+        except:
+            return f'000-0000-0000'
+
+    def get_profile_img(self,obj):
+        try:
+            return obj.userprofile.phone
+        except:
+            return f'https://cdn.pixabay.com/photo/2017/09/25/13/12/cocker-spaniel-2785074__480.jpg'
+    
+    def get_introduction(self,obj):
+        try:
+            return obj.userprofile.introduction
+        except:
+            return f'유저님의 마이 페이지입니다'
 
     def get_like_articles(self, obj):
 
@@ -54,12 +67,12 @@ class UserSerializer(serializers.ModelSerializer):
                 'author':article.user.username,
                 'imgurl': [img.imgurl for img  in images],
                 'comment': [com.comment for com  in comments]
-
             }
             article_list.append(doc)     
 
 
         return article_list
+    
     
 
     gender_choice = serializers.IntegerField(write_only=True, required=False)
@@ -119,7 +132,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # fields = '__all__'
-        fields =  ['id', 'password', 'username', 'email', 'gender', 'birthday', 'last_login', 'updated_at', 'created_at', 'latitude', 'longitude', 'petprofile', 'birthday_date', 'gender_choice', 'is_active_val', 'like_articles','phone_num' ]
+        fields =  ['id', 'password', 'username', 'email', 'gender', 'birthday', 'last_login', 'updated_at', 'created_at', 
+        'latitude', 'longitude', 'petprofile', 'birthday_date', 'gender_choice', 'is_active_val', 'like_articles',
+        'phone_num', 'profile_img','introduction' ]
 
         extra_kwargs = {
             'password': {'write_only': True},

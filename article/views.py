@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from article.models import Article, Image, Comment
 from article.serializers import ArticleSerializer, ImageSerializer, CommentSerializer
+from django.db.models import Count
 from user.models import User
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -10,7 +11,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class ArticleView(APIView):
     def get(self, request):
-        articles = Article.objects.all()
+        articles = Article.objects.all().order_by('-created_at')
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -22,6 +23,13 @@ class ArticleView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ArticleTopView(APIView):
+    def get(self, request):
+        articles = Article.objects.all()
+        top_articles = articles.annotate(like_count=Count('like')).order_by('-like_count')[:7]
+        top_articles = ArticleSerializer(top_articles, many=True)
+        return Response(top_articles.data, status=status.HTTP_200_OK)
 
 class ArticleDetailView(APIView):
     def get(self, request, pk):
