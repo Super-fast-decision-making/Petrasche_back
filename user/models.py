@@ -90,7 +90,7 @@ class UserProfile(models.Model):
     gender = models.CharField("성별", max_length=5, choices=gender_choice, null=True, blank=True)
     is_active= models.BooleanField("공개여부", default=True, null=True, blank=True)
     phoneNumberRegex = RegexValidator(regex = r'^01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})$')
-    phone = models.CharField("폰 번호",validators = [phoneNumberRegex], max_length = 11, unique = True, null=True, blank=True)
+    phone = models.CharField("폰 번호",validators = [phoneNumberRegex], max_length = 13, unique = True, null=True, blank=True)
     introduction = models.TextField("자기 소개글", null=True, blank=True)
     address = models.TextField("주소", null=True, blank=True)
     profile_img = models.URLField("프로필 이미지", max_length=200, null=True, blank=True )

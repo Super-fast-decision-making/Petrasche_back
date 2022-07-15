@@ -19,6 +19,10 @@ class PetProfileSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    # def update(self, instance, validated_data):
+        
+    #     instance.save()
+    #     return instance
     class Meta:
         model = UserProfile
         fields = '__all__'
