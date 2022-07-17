@@ -15,7 +15,7 @@ from datetime import datetime
 
 class ChannelCreateAPIView(CreateAPIView):
     serializer_class = ChannelSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     authentication_classes=[JWTAuthentication]
 
     def perform_create(self, serializer):
@@ -52,7 +52,7 @@ class MessageCreateView(APIView):
 class MessageListView(APIView):
 
     def get(self, request, channel_id):
-        print(request.user.username);
+        print(request.user.username)
         print(datetime.now())
         print(channel_id)
         messages = Message.objects.filter(
