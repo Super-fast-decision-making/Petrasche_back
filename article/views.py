@@ -63,6 +63,8 @@ class CommentView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, pk):
+        print(request.data)
+        print("*******************온다구")
         comment = Comment.objects.get(pk=pk)
         comment.delete()
         return Response({"massege" : "삭제 성공"},status=status.HTTP_200_OK)
