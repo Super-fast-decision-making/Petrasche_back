@@ -3,6 +3,7 @@ from rest_framework import serializers
 from article.models import Article, Image, Comment
 from article.s3upload import upload as s3
 from datetime import datetime
+from user.models import UserFollowing
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,6 +44,11 @@ class ArticleSerializer(serializers.ModelSerializer):
     image_lists = serializers.ListField(write_only=True, required=False)
     author = serializers.SerializerMethodField()
     date = serializers.SerializerMethodField()
+    user_following = serializers.SerializerMethodField()
+
+    def get_user_following(self, obj):
+        users = UserFollowing.objects.filter(following_user_id=obj.user.id)
+        return [user.user_id.id for user in users]
 
 
     def get_author(self,obj):
@@ -94,7 +100,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author', 'date']
+        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author', 'date', 'user_following']
 
 
 # class  LikeSerailzier(serializers.ModelSerializer):
