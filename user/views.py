@@ -101,7 +101,11 @@ class UserFollowingView(APIView):
     authentication_classes=[JWTAuthentication]
 
     def post(self,request):
+        print("*********")
+        print(request.data['username'])
         following_user=User.objects.get(username=request.data['username'])
+        print(following_user)
+        print("*********")
         new_follow, created = UserFollowing.objects.get_or_create(user_id=request.user, following_user_id= following_user)
         if created:
             new_follow.save()
