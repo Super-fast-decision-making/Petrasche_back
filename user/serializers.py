@@ -9,7 +9,7 @@ EMAIL = ("@naver.com", "@gmail.com", "@kakao.com")
 class PetProfileSerializer(serializers.ModelSerializer):
 
     pet_owner = serializers.SerializerMethodField()
-    article = ArticleSerializer(many=True)
+    article = ArticleSerializer(many=True, read_only=True)
 
     def get_pet_owner(self, obj):
         return obj.user.username
@@ -17,7 +17,6 @@ class PetProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = PetProfile
         fields = '__all__'
-
 
 class UserProfileSerializer(serializers.ModelSerializer):
     # def update(self, instance, validated_data):

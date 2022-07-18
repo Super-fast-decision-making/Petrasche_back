@@ -44,6 +44,7 @@ CORS_ALLOWED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'user',
     'article',
     'dm',
@@ -56,6 +57,12 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
+
+    # # django-allauth
+    # 'allauth',
+    # 'allauth.account',
+    # 'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.kakao',
 ]
 
 MIDDLEWARE = [
@@ -89,7 +96,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'petrasche.wsgi.application'
 
+ASGI_APPLICATION = 'petrasche.asgi.application'
 
+CHANNEL_LAYERS = {
+    'default':{
+        'BACKEND':'channels.layers.InMemoryChannelLayer'
+    }
+}
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
