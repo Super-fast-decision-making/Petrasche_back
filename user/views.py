@@ -12,7 +12,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.core.exceptions import ValidationError
-from allauth.socialaccount.models import SocialAccount
+
 
 # 회원가입
 class UserView(APIView):
