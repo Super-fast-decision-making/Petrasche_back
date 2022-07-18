@@ -25,7 +25,7 @@ class CommentSerializer(BaseSerializer):
         fields = '__all__'
 
 
-class ArticleSerializer(BaseSerializers):
+class ArticleSerializer(BaseSerializer):
     comment = CommentSerializer(many=True, read_only=True, source='comment_set')
     likes = serializers.SerializerMethodField()
     like_num = serializers.SerializerMethodField()
