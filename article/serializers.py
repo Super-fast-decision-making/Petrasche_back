@@ -25,7 +25,7 @@ class CommentSerializer(BaseSerializer):
         fields = '__all__'
 
 
-class ArticleSerializer(serializers.ModelSerializer):
+class ArticleSerializer(BaseSerializer):
     article_pet_list = serializers.SerializerMethodField()
     comment = CommentSerializer(many=True, read_only=True, source='comment_set')
     likes = serializers.SerializerMethodField()
@@ -47,7 +47,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         return obj.user.username
 
     def get_likes(self, obj):
-        return [like.username for like in obj.like.all()]
+        return [like.id for like in obj.like.all()]
 
     def get_like_num(self,obj):
         return  obj.like.all().count()
@@ -56,8 +56,10 @@ class ArticleSerializer(serializers.ModelSerializer):
         return [image.imgurl for image in obj.image_set.all()]
 
     def create(self, validated_data):
-        user_pet = validated_data.pop('user_pet')
-        print(f"user_pet: {user_pet}")
+        try:
+            user_pet = validated_data.pop('user_pet')
+        except:
+            pass
         image_lists = validated_data.pop('image_lists')
         user = validated_data['user']
         user = user.id
@@ -70,9 +72,12 @@ class ArticleSerializer(serializers.ModelSerializer):
         for imageurl in imgurls:
             image_data = {'article': article, 'imgurl': imageurl}
             Image.objects.create(**image_data)
-        pet = PetProfile.objects.get(id=user_pet)
-        pet.article.add(article)
-        pet.save()
+        try:
+            pet = PetProfile.objects.get(id=user_pet)
+            pet.article.add(article)
+            pet.save()
+        except:
+            pass
         return article
 
     def update(self, instance, validated_data):
