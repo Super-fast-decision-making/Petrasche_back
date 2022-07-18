@@ -1,17 +1,13 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
-from .views import (
-    MessageCreateView,
-    MessageListView,
-    ChannelCreateAPIView,
-    ChannelListAPIView
-)
+
+
+from dm.views import HeaderView
+
 
 
 urlpatterns = [
-    path('', ChannelListAPIView.as_view(), name='channel-list'),
-    path('create/', ChannelCreateAPIView.as_view(), name='channel-create'),
-    path('<int:channel_id>/', MessageListView.as_view(), name='message-list'),
-    path('<int:channel_id>/send/',
-         MessageCreateView.as_view(), name='message-create'),
+    path('', HeaderView.as_view()),
 ]
+
+
