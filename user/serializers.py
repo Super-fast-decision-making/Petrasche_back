@@ -18,7 +18,6 @@ class PetProfileSerializer(serializers.ModelSerializer):
         model = PetProfile
         fields = '__all__'
 
-
 class UserProfileSerializer(serializers.ModelSerializer):
     # def update(self, instance, validated_data):
         

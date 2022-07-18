@@ -9,6 +9,7 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path('', views.UserView.as_view()),
     path('login/', views.TokenObtainPairView.as_view(), name='patrasche_token'),
+    path('kakao/', views.KakaoLoginView.as_view(), name='kakao_login'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('authonly/', views.OnlyAuthenticatedUserView.as_view()),
     path('authonly/<int:pk>/', views.OnlyAuthenticatedUserView.as_view()),

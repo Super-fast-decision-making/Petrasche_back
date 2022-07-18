@@ -19,7 +19,7 @@ class UserView(APIView):
     def get(self, request):
         if request.user:
             user_serializer = UserSerializer(request.user).data
-            # print(user_serializer)
+ 
             user_serializer['followers'] = UserFollowing.objects.filter(following_user_id=request.user).count() # 나를 팔로우 하는 사람 수
             user_serializer['followings'] = UserFollowing.objects.filter(user_id=request.user).count() # 내가 팔로우 하는 사람 수
             return Response(user_serializer, status=status.HTTP_200_OK)
@@ -27,7 +27,6 @@ class UserView(APIView):
 
 
     def post(self, request):
-
         user_serializer=UserSerializer(data=request.data)
 
         if user_serializer.is_valid():
@@ -38,6 +37,18 @@ class UserView(APIView):
 # 로그인 기능
 class TokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
+
+
+class KakaoLoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def post(self, request):
+        print("***************")
+        print(request.data)
+        # {'access_token': 'DFOOTfzQtsNLr0AdCbuHR-mVMgIP3UsuB23KFSRpCj1y6gAAAYIOokiv', 'token_type': 'bearer', 'refresh_token': 'IAOdwEjWGviwfXRL-VA5mqv9zqRUYne3FaLQmu9fCj1y6gAAAYIOokiu', 'expires_in': 7199, 'scope': 'account_email gender profile_nickname', 'refresh_token_expires_in': 5183999, 'email': 'tulip_han@naver.com', 'username': '한예슬'}        
+        #회원가입-> 이메일하고 유저네임 뽑아서 모델에 저장하고
+        # 토큰 프론트로 가져가서
+        #jwt 디코드를 해서 autho
+
 
 # 수정
 class OnlyAuthenticatedUserView(APIView):
