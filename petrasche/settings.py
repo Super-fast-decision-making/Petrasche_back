@@ -44,6 +44,7 @@ CORS_ALLOWED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'user',
     'article',
     'dm',
@@ -56,6 +57,12 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
+
+    # # django-allauth
+    # 'allauth',
+    # 'allauth.account',
+    # 'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.kakao',
 ]
 
 MIDDLEWARE = [
@@ -89,7 +96,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'petrasche.wsgi.application'
 
+ASGI_APPLICATION = 'petrasche.asgi.application'
 
+CHANNEL_LAYERS = {
+    'default':{
+        'BACKEND':'channels.layers.InMemoryChannelLayer'
+    }
+}
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -129,7 +142,7 @@ TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -201,4 +214,5 @@ AUTH_USER_MODEL = 'user.User'
 CORS_ORIGIN_WHITELIST = [
     'http://127.0.0.1:5500',    
     'http://localhost:5500',
+    
     ]

@@ -1,8 +1,13 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
+
+from dm.views import HeaderView
+
+
+
 urlpatterns = [
-    path('', views.MessageView.as_view()),
-    # path("<int:pk>/", views.chatroom, name="chatroom"),
-    # path("ajax/<int:pk>/", views.ajax_load_messages, name="chatroom-ajax"),
+    path('', HeaderView.as_view()),
 ]
+
+
