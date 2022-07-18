@@ -3,7 +3,6 @@ from article.models import Article, Comment, Image
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from user.models import BaseModel, User
 
-
 class ImageInline(admin.TabularInline):
     model = Image
     extra = 1
@@ -30,8 +29,6 @@ class ArticleAdmin(admin.ModelAdmin):
     )
     inlines = [ImageInline, CommentInline]
 
-
-# Register your models here.
 admin.site.register(Article, ArticleAdmin)
 admin.site.register(Comment)
 # admin.site.register(Image)
