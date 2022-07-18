@@ -53,11 +53,11 @@ class KakaoLoginView(APIView):
             # 기존에 가입된 유저가 있다면 로그인
             user = User.objects.get(email=email)
             print(user.password)
-            if user and (user.password==""):
+            if user and (user.password==None):
                 refresh = RefreshToken.for_user(user)
 
                 return Response({'refresh': str(refresh), 'access': str(refresh.access_token), "msg" : "로그인 성공"}, status=status.HTTP_200_OK)
-            elif user and (user.password!=""):
+            elif user and (user.password!=None):
                 return Response({"error": "해당 카카오 이메일을 사용해 일반 회원가입한 회원입니다"}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
         #     # 기존에 가입된 유저가 없으면 새로 가입           
