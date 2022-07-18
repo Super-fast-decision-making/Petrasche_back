@@ -3,6 +3,7 @@ from rest_framework import serializers
 from article.models import Article, Image, Comment
 from article.s3upload import upload as s3
 from datetime import datetime
+from dm.serializers import BaseSerializer
 from user.models import UserFollowing
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -10,46 +11,32 @@ class ImageSerializer(serializers.ModelSerializer):
         model = Image
         fields = '__all__'
 
-class CommentSerializer(serializers.ModelSerializer):
+
+class CommentSerializer(BaseSerializer):
     username = serializers.SerializerMethodField()
-    date = serializers.SerializerMethodField()
     
     def get_username(self, obj):
         if obj.user:
             return obj.user.username
         return "삭제된 사용자"
 
-    def get_date(self, obj):
-        time = datetime.now()
-        if (obj.created_at.date()==time.date()) and (obj.created_at.hour==time.hour):
-            return str(time.minute-obj.created_at.minute)+"분전"
-        elif obj.created_at.date()==time.date():
-            return str(time.hour-obj.created_at.hour)+"시간전"
-        elif obj.created_at.month==time.month:
-            return  str(time.day-obj.created_at.day) + "일전"
-        elif obj.created_at.year ==time.year:
-            return str(time.month-obj.created_at.month) + "달전"
-        else:
-            return obj.created_at
-
     class Meta:
         model = Comment
         fields = '__all__'
 
-class ArticleSerializer(serializers.ModelSerializer):
+
+class ArticleSerializer(BaseSerializer):
     comment = CommentSerializer(many=True, read_only=True, source='comment_set')
     likes = serializers.SerializerMethodField()
     like_num = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
     image_lists = serializers.ListField(write_only=True, required=False)
     author = serializers.SerializerMethodField()
-    date = serializers.SerializerMethodField()
     user_following = serializers.SerializerMethodField()
 
     def get_user_following(self, obj):
         users = UserFollowing.objects.filter(following_user_id=obj.user.id)
         return [user.user_id.id for user in users]
-
 
     def get_author(self,obj):
         return obj.user.username
@@ -62,19 +49,6 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     def get_images(self, obj):
         return [image.imgurl for image in obj.image_set.all()]
-
-    def get_date(self, obj):
-        time = datetime.now()
-        if (obj.created_at.date()==time.date()) and (obj.created_at.hour==time.hour):
-            return str(time.minute-obj.created_at.minute)+"분전"
-        elif obj.created_at.date()==time.date():
-            return str(time.hour-obj.created_at.hour)+"시간전"
-        elif obj.created_at.month==time.month:
-            return  str(time.day-obj.created_at.day) + "일전"
-        elif obj.created_at.year ==time.year:
-            return str(time.month-obj.created_at.month) + "달전"
-        else:
-            return obj.created_at
 
     def create(self, validated_data):
         image_lists = validated_data.pop('image_lists')

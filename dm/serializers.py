@@ -1,10 +1,7 @@
-from dataclasses import field
-from django.dispatch import receiver
 from rest_framework import serializers
 from dm.models import Message, Header
-from user.models import User, BaseModel
-from user.serializers import UserSerializer
 from datetime import datetime
+from user.models import BaseModel
 
 class BaseSerializer(serializers.ModelSerializer):
     date = serializers.SerializerMethodField()
