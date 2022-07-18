@@ -1,10 +1,8 @@
-from django.dispatch import receiver
-from dm.models import Header, Message
-from user.models import User
+from dm.models import Header
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from dm.serializers import HeaderSerializer, MessageSerializer
+from dm.serializers import HeaderSerializer
 # Create your views here.
         
             
