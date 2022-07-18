@@ -47,7 +47,7 @@ class ArticleSerializer(BaseSerializer):
         return obj.user.username
 
     def get_likes(self, obj):
-        return [like.username for like in obj.like.all()]
+        return [like.id for like in obj.like.all()]
 
     def get_like_num(self,obj):
         return  obj.like.all().count()
@@ -72,9 +72,12 @@ class ArticleSerializer(BaseSerializer):
         for imageurl in imgurls:
             image_data = {'article': article, 'imgurl': imageurl}
             Image.objects.create(**image_data)
-        pet = PetProfile.objects.get(id=user_pet)
-        pet.article.add(article)
-        pet.save()
+        try:
+            pet = PetProfile.objects.get(id=user_pet)
+            pet.article.add(article)
+            pet.save()
+        except:
+            pass
         return article
 
     def update(self, instance, validated_data):
