@@ -44,6 +44,7 @@ CORS_ALLOWED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'user',
     'article',
     'dm',
@@ -95,7 +96,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'petrasche.wsgi.application'
 
+ASGI_APPLICATION = 'petrasche.asgi.application'
 
+CHANNEL_LAYERS = {
+    'default':{
+        'BACKEND':'channels.layers.InMemoryChannelLayer'
+    }
+}
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
