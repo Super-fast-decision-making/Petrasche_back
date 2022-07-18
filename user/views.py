@@ -52,16 +52,13 @@ class KakaoLoginView(APIView):
         try: 
             # 기존에 가입된 유저가 있다면 로그인
             user = User.objects.get(email=email)
-            # print(user)
-
-            if user:
+            print(user.password)
+            if user and (user.password==""):
                 refresh = RefreshToken.for_user(user)
-                print("***************")
-                print(refresh)
-                # print(refresh.access_token)
 
-            
                 return Response({'refresh': str(refresh), 'access': str(refresh.access_token), "msg" : "로그인 성공"}, status=status.HTTP_200_OK)
+            elif user and (user.password!=""):
+                return Response({"error": "해당 카카오 이메일을 사용해 일반 회원가입한 회원입니다"}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
         #     # 기존에 가입된 유저가 없으면 새로 가입           
             new_user = User.objects.create(
@@ -89,10 +86,9 @@ class OnlyAuthenticatedUserView(APIView):
         user = User.objects.get(id=pk)
         if request.user != user:
             return Response({"error": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
-        # request.data['user'] = user.id
+        
         userprofile = UserProfile.objects.get(user=user)
         user_serializer = UserProfileSerializer(userprofile, data=request.data, partial=True)
-        print(user_serializer)
         if user_serializer.is_valid():
             user_serializer.save()
             return Response(user_serializer.data, status=status.HTTP_200_OK)
