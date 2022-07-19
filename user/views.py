@@ -7,7 +7,7 @@ from .serializers_jwt import TokenObtainPairSerializer
 from .serializers import UserProfileSerializer, UserSerializer, PetProfileSerializer
 
 from .models import User, UserFollowing, PetProfile, UserProfile
-from article.models import Article
+from article.models import Article, Comment
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -73,7 +73,6 @@ class KakaoLoginView(APIView):
         try: 
             # 기존에 가입된 유저가 있다면 로그인
             user = User.objects.get(email=email)
-            print(user.password)
             if user and (user.password==None):
                 refresh = RefreshToken.for_user(user)
 
@@ -122,11 +121,7 @@ class UserFollowingView(APIView):
     authentication_classes=[JWTAuthentication]
 
     def post(self,request):
-        print("*********")
-        print(request.data['username'])
         following_user=User.objects.get(username=request.data['username'])
-        print(following_user)
-        print("*********")
         new_follow, created = UserFollowing.objects.get_or_create(user_id=request.user, following_user_id= following_user)
         if created:
             new_follow.save()
@@ -148,7 +143,6 @@ class PetView(APIView):
 
         request.data['user'] = user.id
 
-        print(request.data)
         serializer=PetProfileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -175,9 +169,10 @@ class HistoryView(APIView):
         user = request.user
         following = UserFollowing.objects.filter(following_user_id=user)[:10]
         histories = Article.objects.filter(user=user).order_by('-created_at')[:10]
-        histories = list(chain(following, histories))
+        histories_comments = Comment.objects.filter(article__user=user).order_by('-created_at')[:10]
+        histories = list(chain(histories, histories_comments, following))
         histories.sort(key=lambda x: x.created_at, reverse=True)
-        histories = histories[:10]
+        histories = histories[:15]
         history_list = []
         for history in histories:
             try:
@@ -186,7 +181,6 @@ class HistoryView(APIView):
                         pass
                     else:
                         time = (datetime.now() - history.created_at).total_seconds()
-                        time = int(time)
                         time = time_calculate(time)
                         
                         doc = {
@@ -197,17 +191,32 @@ class HistoryView(APIView):
                         }
                         history_list.append(doc)
 
-            except:
-                time = (datetime.now() - history.created_at).total_seconds()
-                time = int(time)
-                time = time_calculate(time)
+            except AttributeError:
+                try:
+                    if history.user == user:
+                        pass
+                    else:
+                        time = (datetime.now() - history.created_at).total_seconds()
+                        time = time_calculate(time)
 
-                doc = {
-                    "content" : "None",
-                    "user" : history.user_id.username,
-                    "time" : time,
-                    "type" : "follow",
-                }
-                history_list.append(doc)
+                        doc = {
+                            "content": "None",
+                            "user": history.user.username,
+                            "time" : time,
+                            "type" : "comment",
+                        }
+                        history_list.append(doc)
+                except:
+                    time = (datetime.now() - history.created_at).total_seconds()
+                    time = int(time)
+                    time = time_calculate(time)
+
+                    doc = {
+                        "content" : "None",
+                        "user" : history.user_id.username,
+                        "time" : time,
+                        "type" : "follow",
+                    }
+                    history_list.append(doc)
 
         return Response(history_list, status=status.HTTP_200_OK)

@@ -29,6 +29,7 @@ class ArticleSerializer(BaseSerializer):
     article_pet_list = serializers.SerializerMethodField()
     comment = CommentSerializer(many=True, read_only=True, source='comment_set')
     likes = serializers.SerializerMethodField()
+    like_users = serializers.SerializerMethodField()
     like_num = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
     image_lists = serializers.ListField(write_only=True, required=False)
@@ -48,6 +49,9 @@ class ArticleSerializer(BaseSerializer):
 
     def get_likes(self, obj):
         return [like.id for like in obj.like.all()]
+
+    def get_like_users(self, obj):
+        return [like.username for like in obj.like.all()]
 
     def get_like_num(self,obj):
         return  obj.like.all().count()
@@ -89,4 +93,4 @@ class ArticleSerializer(BaseSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author', 'date', 'user_following','user_pet','article_pet_list']
+        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author', 'date', 'user_following','user_pet','article_pet_list','like_users']
