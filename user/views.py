@@ -1,3 +1,4 @@
+from itertools import chain
 from rest_framework.views import APIView
 from rest_framework import status, permissions
 from rest_framework.response import Response
@@ -6,13 +7,33 @@ from .serializers_jwt import TokenObtainPairSerializer
 from .serializers import UserProfileSerializer, UserSerializer, PetProfileSerializer
 
 from .models import User, UserFollowing, PetProfile, UserProfile
+from article.models import Article
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.core.exceptions import ValidationError
+from datetime import datetime, timedelta
 
+
+def time_calculate(time):
+    if time < 60:
+        time = str(time) + '초전'
+    elif time < 3600:
+        time = str(int(time / 60)) + '분전'
+    elif time < 86400:
+        time = str(int(time / 3600)) + '시간전'
+    elif time < 604800:
+        time = str(int(time / 86400)) + '일전'
+    elif time < 2592000:
+        time = str(int(time / 604800)) + '주전'
+    elif time < 31536000:
+        time = str(int(time / 2592000)) + '달전'
+    else:
+        time = str(int(time / 31536000)) + '년전' 
+    
+    return time
 
 # 회원가입
 class UserView(APIView):
@@ -146,3 +167,47 @@ class PetView(APIView):
         pet = PetProfile.objects.get(pk=pk)
         pet.delete()
         return Response({"massege" : "삭제 성공"},status=status.HTTP_200_OK)
+
+class HistoryView(APIView):
+    authentication_classes=[JWTAuthentication]
+
+    def get(self, request):
+        user = request.user
+        following = UserFollowing.objects.filter(following_user_id=user)[:10]
+        histories = Article.objects.filter(user=user).order_by('-created_at')[:10]
+        histories = list(chain(following, histories))
+        histories.sort(key=lambda x: x.created_at, reverse=True)
+        histories = histories[:10]
+        history_list = []
+        for history in histories:
+            try:
+                for like in history.like.all():
+                    if like.username == user.username:
+                        pass
+                    else:
+                        time = (datetime.now() - history.created_at).total_seconds()
+                        time = int(time)
+                        time = time_calculate(time)
+                        
+                        doc = {
+                            "content": history.content,
+                            "user": like.username,
+                            "time" : time,
+                            "type" : "like",
+                        }
+                        history_list.append(doc)
+
+            except:
+                time = (datetime.now() - history.created_at).total_seconds()
+                time = int(time)
+                time = time_calculate(time)
+
+                doc = {
+                    "content" : "None",
+                    "user" : history.user_id.username,
+                    "time" : time,
+                    "type" : "follow",
+                }
+                history_list.append(doc)
+
+        return Response(history_list, status=status.HTTP_200_OK)
