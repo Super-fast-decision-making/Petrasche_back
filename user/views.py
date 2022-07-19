@@ -42,7 +42,7 @@ class UserView(APIView):
     def get(self, request):
         if request.user:
             user_serializer = UserSerializer(request.user).data
- 
+
             user_serializer['followers'] = UserFollowing.objects.filter(following_user_id=request.user).count() # 나를 팔로우 하는 사람 수
             user_serializer['followings'] = UserFollowing.objects.filter(user_id=request.user).count() # 내가 팔로우 하는 사람 수
             return Response(user_serializer, status=status.HTTP_200_OK)
@@ -154,9 +154,9 @@ class PetDetailView(APIView):
     authentication_classes=[JWTAuthentication]
 
     def get(self, request,pk):
-        pet = PetProfile.objects.filter(id=pk)
+        pet = PetProfile.objects.get(id=pk)
         print(pet)
-        return Response(PetProfileSerializer(pet, many=True).data, status=status.HTTP_200_OK)
+        return Response(PetProfileSerializer(pet).data, status=status.HTTP_200_OK)
 
     def put(self, request, pk):
         pet = PetProfile.objects.get(pk=pk)
