@@ -101,11 +101,7 @@ class UserFollowingView(APIView):
     authentication_classes=[JWTAuthentication]
 
     def post(self,request):
-        print("*********")
-        print(request.data['username'])
         following_user=User.objects.get(username=request.data['username'])
-        print(following_user)
-        print("*********")
         new_follow, created = UserFollowing.objects.get_or_create(user_id=request.user, following_user_id= following_user)
         if created:
             new_follow.save()
@@ -133,6 +129,15 @@ class PetView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PetDetailView(APIView):
+    authentication_classes=[JWTAuthentication]
+
+    def get(self, request,pk):
+        pet = PetProfile.objects.filter(id=pk)
+        print(pet)
+        return Response(PetProfileSerializer(pet, many=True).data, status=status.HTTP_200_OK)
 
     def put(self, request, pk):
         pet = PetProfile.objects.get(pk=pk)

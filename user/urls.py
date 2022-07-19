@@ -15,6 +15,5 @@ urlpatterns = [
     path('authonly/<int:pk>/', views.OnlyAuthenticatedUserView.as_view()),
     path('follow/', views.UserFollowingView.as_view()),
     path('mypet/', views.PetView.as_view()),
-    path('mypet/<int:pk>/', views.PetView.as_view()),
-
+    path('mypet/<int:pk>/', views.PetDetailView.as_view()),
 ]
