@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from dm.models import Message, Header
 from datetime import datetime
-from user.models import BaseModel
+from user.models import BaseModel, UserProfile
 
 class BaseSerializer(serializers.ModelSerializer):
     date = serializers.SerializerMethodField()

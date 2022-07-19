@@ -3,14 +3,18 @@ from channels.consumer import AsyncConsumer
 from channels.db import database_sync_to_async
 from dm.models import Message, Header
 from user.models import User
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class ChatConsumer(AsyncConsumer):
+    authentication_classes=[JWTAuthentication]
+    
     async def websocket_connect(self, event):
         print('connected', event)
         user = self.scope['user']
         chat_room = f'user_chatroom_{user.id}'
         self.chat_room = chat_room
+        print(user)
         await self.channel_layer.group_add(
             chat_room,
             self.channel_name
@@ -22,6 +26,7 @@ class ChatConsumer(AsyncConsumer):
     async def websocket_receive(self, event):
         print('receive', event)
         received_data = json.loads(event['text'])
+        print(received_data)
         msg = received_data.get('message')
         sent_by_id = received_data.get('sent_by')
         send_to_id = received_data.get('send_to')
