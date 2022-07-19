@@ -106,9 +106,14 @@ class OnlyAuthenticatedUserView(APIView):
         user = User.objects.get(id=pk)
         if request.user != user:
             return Response({"error": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
-        
-        userprofile = UserProfile.objects.get(user=user)
-        user_serializer = UserProfileSerializer(userprofile, data=request.data, partial=True)
+
+        for key, value in request.data.items():
+            if key == "password":
+                user_serializer = UserSerializer(user, data=request.data, partial=True)
+            else:
+                userprofile = UserProfile.objects.get(user=user)
+                user_serializer = UserProfileSerializer(userprofile, data=request.data, partial=True)
+
         if user_serializer.is_valid():
             user_serializer.save()
             return Response(user_serializer.data, status=status.HTTP_200_OK)
