@@ -14,6 +14,7 @@ def upload(user,image):
     s3 = boto3.client('s3',
         aws_access_key_id=env('AWSAccessKeyId'),
         aws_secret_access_key=env('AWSSecretKey'),
+        region_name='ap-northeast-2',
     )
 
     Bucket = "pracs3"

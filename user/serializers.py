@@ -14,6 +14,7 @@ class PetProfileSerializer(serializers.ModelSerializer):
     def get_pet_owner(self, obj):
         return obj.user.username
 
+
     class Meta:
         model = PetProfile
         fields = '__all__'
