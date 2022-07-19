@@ -5,12 +5,14 @@ from rest_framework.response import Response
 from rest_framework import status  
   
 from elasticsearch import Elasticsearch  
+import requests
 
 
 class SearchView(APIView):
 
     def get(self, request):
-        es = Elasticsearch('http://localhost:9200')
+        es_url = 'http://localhost:9200'
+        es = Elasticsearch(es_url)
 
         # 검색어
         search_words = request.GET.get('search')
@@ -19,6 +21,16 @@ class SearchView(APIView):
         if not search_words:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'search word param is missing'})
 
+        es_url+'/article/_search?q='+ search_words 
+        response = requests.get(es_url+'/article/_search?q='+ search_words)
+        article_pk_list = []
+        for obj in response['hits']['hits']:
+            article_pk_list.append(obj["_source"]["pk"])
+            
+        
+        return Response(response['hits']['hits'], status=status.HTTP_200_OK)
+
+'''
         docs = es.search(
             index='dictionary',
             body={
@@ -38,11 +50,9 @@ class SearchView(APIView):
             data_list.append(data.get('_source'))
 
         return Response(data_list)
+'''   
     
-    
-    
-    
-    
+'''
 class ArticleSearchView(APIView):
     def get(self, request):
         words = request.query_params.get('words', '').strip()
@@ -67,3 +77,4 @@ class ArticleSearchView(APIView):
 
         return Response({'message': '검색된 게시물이 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
+'''

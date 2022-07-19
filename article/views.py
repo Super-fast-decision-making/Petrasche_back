@@ -1,3 +1,4 @@
+from elasticsearch import Elasticsearch
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,7 +8,9 @@ from django.db.models import Count
 from user.models import User
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
+import requests
 
+es_url = 'http://localhost:9200'
 
 class ArticleView(APIView):
     def get(self, request):
@@ -102,4 +105,33 @@ class MyArticleView(APIView):
     def delete(self, request, pk):
         article = Article.objects.get(pk=pk)
         article.delete()
+        
+        requests.delete(es_url + f"/article/{pk}") # es delete
+        
         return Response({"massege" : "삭제 성공"},status=status.HTTP_200_OK)
+    
+    
+# es _search
+class SearchView(APIView):
+
+    def get(self, request):
+        es = Elasticsearch(es_url)
+
+        # 검색어
+        search_words = request.GET.get('search')
+        # search_words = request.query_params.get('words', '').strip()
+        
+        if not search_words:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'search word param is missing'})
+
+        res = requests.get(es_url+'/article/_search?q='+ search_words)
+        response = res.json()
+        article_pk_list = []
+        for obj in response['hits']['hits']:
+            article_pk_list.append(obj["_source"]["pk"])
+        articles = Article.objects.filter(pk__in=article_pk_list)
+        
+        return Response(ArticleSerializer(articles, many=True).data, status=status.HTTP_200_OK)
+
+    
+    
