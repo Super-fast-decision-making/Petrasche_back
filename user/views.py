@@ -16,6 +16,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ValidationError
 from datetime import datetime, timedelta
 
+from django.contrib.auth.hashers import check_password
+
 
 def time_calculate(time):
     if time < 60:
@@ -106,13 +108,21 @@ class OnlyAuthenticatedUserView(APIView):
         user = User.objects.get(id=pk)
         if request.user != user:
             return Response({"error": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
-        
-        userprofile = UserProfile.objects.get(user=user)
-        user_serializer = UserProfileSerializer(userprofile, data=request.data, partial=True)
+
+        for key, value in request.data.items():
+            if key == "password":
+                if check_password(value,user.password):
+                    return Response({"massege" : "이전과 같은 비밀번호는 사용할 수 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    user_serializer = UserSerializer(user, data=request.data, partial=True)
+            else:
+                userprofile = UserProfile.objects.get(user=user)
+                user_serializer = UserProfileSerializer(userprofile, data=request.data, partial=True)
+
         if user_serializer.is_valid():
             user_serializer.save()
-            return Response(user_serializer.data, status=status.HTTP_200_OK)
-        return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"massege" : "변경되었습니다.", "response": user_serializer.data}, status=status.HTTP_200_OK)
+        return Response({"massege" : "변경 오류", "response": user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # 팔로우/언팔로우
@@ -220,3 +230,14 @@ class HistoryView(APIView):
                     history_list.append(doc)
 
         return Response(history_list, status=status.HTTP_200_OK)
+
+# 비밀번호 인증
+class AuthPasswordView(APIView):
+
+    def post(self, request):
+        origin_password = request.user.password
+        input_password = request.data['password']
+
+        if check_password(input_password,origin_password):
+            return Response({"massege" : "인증되었습니다.", "response": request.user.id}, status=status.HTTP_200_OK)
+        return Response({"massege" : "비밀번호가 일치하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)

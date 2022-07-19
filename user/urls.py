@@ -17,5 +17,5 @@ urlpatterns = [
     path('mypet/', views.PetView.as_view()),
     path('mypet/<int:pk>/', views.PetView.as_view()),
     path('history/', views.HistoryView.as_view()),
-
+    path('auth/', views.AuthPasswordView.as_view()),
 ]
