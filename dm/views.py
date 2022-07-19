@@ -7,6 +7,8 @@ from dm.serializers import HeaderSerializer
         
             
 class HeaderView(APIView):
+    authentication_classes=[JWTAuthentication]
+    
     def get(self, request):
         header = Header.objects.by_user(user=request.user).prefetch_related('header').order_by('-created_at')
         header_serializer = HeaderSerializer(header, many=True, context={'header':header}).data
