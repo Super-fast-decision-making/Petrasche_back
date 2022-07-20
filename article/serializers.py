@@ -5,6 +5,10 @@ from article.s3upload import upload as s3
 from datetime import datetime
 from user.models import UserFollowing, PetProfile
 from dm.serializers import BaseSerializer
+from user.models import UserFollowing
+import requests
+
+es_url = 'http://localhost:9200'
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -76,6 +80,15 @@ class ArticleSerializer(BaseSerializer):
         for imageurl in imgurls:
             image_data = {'article': article, 'imgurl': imageurl}
             Image.objects.create(**image_data)
+           
+        # es indexing 
+        es_body = {
+            "pk": article.pk,
+            "title": article.title,
+            "content": article.content
+        }
+        requests.post(es_url+f"/article/_doc/{article.pk}", json=es_body)
+        
         try:
             pet = PetProfile.objects.get(id=user_pet)
             pet.article.add(article)
@@ -89,6 +102,17 @@ class ArticleSerializer(BaseSerializer):
         instance.content = validated_data.get('content', instance.content)
         instance.is_active = validated_data.get('is_active', instance.is_active)
         instance.save()
+        print(11111)
+        # es update
+        es_body = {
+            "doc": {
+                "title": instance.title,
+                "content": instance.content
+            }
+        }
+        requests.post(es_url+f"/article/_update/{instance.pk}", json=es_body)
+        print(22222)
+        print(instance.pk)
         return instance
 
     class Meta:
