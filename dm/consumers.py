@@ -7,11 +7,11 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class ChatConsumer(AsyncConsumer):
-    authentication_classes=[JWTAuthentication]
     
     async def websocket_connect(self, event):
         print('connected', event)
         user = self.scope['user']
+        # user = self.scope.get('user')
         chat_room = f'user_chatroom_{user.id}'
         print(chat_room, user)
         self.chat_room = chat_room
@@ -97,7 +97,7 @@ class ChatConsumer(AsyncConsumer):
     @database_sync_to_async
     def get_header(self, header_id):
         qs = Header.objects.filter(id=header_id)
-        # qs = Header.objects.create()
+        # qs = Header.objects.get_or_create(id=header_id)
         if qs.exists():
             obj = qs.first()
         else:
@@ -107,3 +107,4 @@ class ChatConsumer(AsyncConsumer):
     @database_sync_to_async
     def create_chat_message(self, header, sender, msg):
         Message.objects.create(header=header, sender=sender, message=msg)
+
