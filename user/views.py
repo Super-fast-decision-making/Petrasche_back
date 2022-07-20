@@ -179,7 +179,7 @@ class PetDetailView(APIView):
     def delete(self, request, pk):
         pet = PetProfile.objects.get(pk=pk)
         pet.delete()
-        return Response({"massege" : "삭제 성공"},status=status.HTTP_200_OK)
+        return Response({"massege" : "프로필이 삭제되었습니다."},status=status.HTTP_200_OK)
 
 class HistoryView(APIView):
     authentication_classes=[JWTAuthentication]
