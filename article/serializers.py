@@ -3,6 +3,7 @@ from rest_framework import serializers
 from article.models import Article, Image, Comment
 from article.s3upload import upload as s3
 from datetime import datetime
+from user.models import UserFollowing, PetProfile
 from dm.serializers import BaseSerializer
 from user.models import UserFollowing
 import requests
@@ -29,11 +30,14 @@ class CommentSerializer(BaseSerializer):
 
 
 class ArticleSerializer(BaseSerializer):
+    article_pet_list = serializers.SerializerMethodField()
     comment = CommentSerializer(many=True, read_only=True, source='comment_set')
     likes = serializers.SerializerMethodField()
+    like_users = serializers.SerializerMethodField()
     like_num = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
     image_lists = serializers.ListField(write_only=True, required=False)
+    user_pet = serializers.IntegerField(write_only=True, required=False)
     author = serializers.SerializerMethodField()
     user_following = serializers.SerializerMethodField()
 
@@ -41,10 +45,16 @@ class ArticleSerializer(BaseSerializer):
         users = UserFollowing.objects.filter(following_user_id=obj.user.id)
         return [user.user_id.id for user in users]
 
+    def get_article_pet_list(self, obj):
+        return [pet.id for pet in obj.petprofile_set.all()]
+        
     def get_author(self,obj):
         return obj.user.username
 
     def get_likes(self, obj):
+        return [like.id for like in obj.like.all()]
+
+    def get_like_users(self, obj):
         return [like.username for like in obj.like.all()]
 
     def get_like_num(self,obj):
@@ -54,6 +64,10 @@ class ArticleSerializer(BaseSerializer):
         return [image.imgurl for image in obj.image_set.all()]
 
     def create(self, validated_data):
+        try:
+            user_pet = validated_data.pop('user_pet')
+        except:
+            pass
         image_lists = validated_data.pop('image_lists')
         user = validated_data['user']
         user = user.id
@@ -75,6 +89,12 @@ class ArticleSerializer(BaseSerializer):
         }
         requests.post(es_url+"/article/_doc/", json=es_body)
         
+        try:
+            pet = PetProfile.objects.get(id=user_pet)
+            pet.article.add(article)
+            pet.save()
+        except:
+            pass
         return article
 
     def update(self, instance, validated_data):
@@ -96,11 +116,4 @@ class ArticleSerializer(BaseSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author', 'date', 'user_following']
-
-
-# class  LikeSerailzier(serializers.ModelSerializer):
-#     articles = ArticleSerializer(many=True, read_only=True, source='article_set')
-#     class Meta:
-#         model = Like
-#         fields = '__all__'
+        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author', 'date', 'user_following','user_pet','article_pet_list','like_users']

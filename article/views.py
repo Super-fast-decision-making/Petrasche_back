@@ -11,12 +11,14 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
 
 es_url = 'http://localhost:9200'
+from petrasche.pagination import PaginationHandlerMixin, BasePagination
 
 class ArticleView(APIView):
     def get(self, request):
         articles = Article.objects.all().order_by('-created_at')
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     def post(self, request):
         user = request.user
@@ -84,15 +86,26 @@ class LikeView(APIView):
             article.like.add(user)
             return Response({"massege" : "좋아요"},status=status.HTTP_200_OK)
 
-class MyArticleView(APIView):
+class MyArticleView(APIView, PaginationHandlerMixin):
 
     authentication_classes=[JWTAuthentication]
+    pagination_class = BasePagination # query_param 설정 /?page=<int>
+    serializer_class = ArticleSerializer
 
     def get(self, request):
         user = request.user
-        articles = Article.objects.filter(user=user)
-        serializer = ArticleSerializer(articles, many=True)
+        articles = Article.objects.filter(user=user).order_by('-id')
+        page = self.paginate_queryset(articles)
+        if page != None:
+            # 페이지네이션 처리된 결과를 serializer에 담아서 결과 값 가공
+            serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
+        # 페이지네이션 처리 필요 없는 경우
+        else:
+            serializer = self.serializer_class(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+        # serializer = ArticleSerializer(articles, many=True)
+        # return Response(serializer.data, status=status.HTTP_200_OK)
+        
 
     def put(self, request, pk):
         article = Article.objects.get(pk=pk)
