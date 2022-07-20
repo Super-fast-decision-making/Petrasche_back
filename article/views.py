@@ -7,13 +7,24 @@ from django.db.models import Count
 from user.models import User
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from petrasche.pagination import PaginationHandlerMixin, BasePagination
 
+#
+class ArticleView(APIView, PaginationHandlerMixin):
+    pagination_class = BasePagination # query_param 설정 /?page=<int>
+    serializer_class = ArticleSerializer
 
-class ArticleView(APIView):
     def get(self, request):
         articles = Article.objects.all().order_by('-created_at')
-        serializer = ArticleSerializer(articles, many=True)
+        page = self.paginate_queryset(articles)
+        if page != None:
+            # 페이지네이션 처리된 결과를 serializer에 담아서 결과 값 가공
+            serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
+        # 페이지네이션 처리 필요 없는 경우
+        else:
+            serializer = self.serializer_class(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     def post(self, request):
         user = request.user
@@ -87,7 +98,7 @@ class MyArticleView(APIView):
 
     def get(self, request):
         user = request.user
-        articles = Article.objects.filter(user=user)
+        articles = Article.objects.filter(user=user).order_by('-id')
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -103,3 +114,5 @@ class MyArticleView(APIView):
         article = Article.objects.get(pk=pk)
         article.delete()
         return Response({"massege" : "삭제 성공"},status=status.HTTP_200_OK)
+    
+
