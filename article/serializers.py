@@ -23,7 +23,6 @@ class CommentSerializer(BaseSerializer):
         if obj.user:
             return obj.user.username
         return "삭제된 사용자"
-
     class Meta:
         model = Comment
         fields = '__all__'
