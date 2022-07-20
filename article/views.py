@@ -15,7 +15,7 @@ from petrasche.pagination import PaginationHandlerMixin, BasePagination
 
 class ArticleView(APIView):
     def get(self, request):
-        articles = Article.objects.all().order_by('-created_at')
+        articles = Article.objects.all().order_by('-created_at')[:5]
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -145,5 +145,10 @@ class SearchView(APIView):
         
         return Response(ArticleSerializer(articles, many=True).data, status=status.HTTP_200_OK)
 
-    
-    
+class ArticleScrollView(APIView):
+    def get(self, request,page):
+        start = (int(page))*5
+        end = start + 5
+        articles = Article.objects.all()[start:end]
+        serializer = ArticleSerializer(articles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
