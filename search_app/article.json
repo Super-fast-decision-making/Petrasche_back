@@ -1,6 +1,0 @@
-{"index": {"_index": "article", "_id": 1}}
-{"pk": 1, "fields": {"updated_at": "2022-07-18T11:00:23.372", "created_at": "2022-07-18T11:00:23.372", "title": null, "user": 2, "content": "강아지 고양이 밥 물 장난감 옷 하늘 바다 산 강 숲 나무 풀 <br>", "is_active": false, "like": []}}
-{"index": {"_index": "article", "_id": 2}}
-{"pk": 2, "fields": {"updated_at": "2022-07-18T17:21:48.920", "created_at": "2022-07-18T17:21:48.920", "title": "영화 재밌다", "user": 3, "content": "게시물 생성 되거라", "is_active": true, "like": []}}
-{"index": {"_index": "article", "_id": 3}}
-{"pk": 3, "fields": {"updated_at": "2022-07-18T17:36:34.535", "created_at": "2022-07-18T17:36:34.535", "title": "HTML5", "user": 2, "content": "피카츄 라이츄 파이리 꼬부기", "is_active": true, "like": []}}
