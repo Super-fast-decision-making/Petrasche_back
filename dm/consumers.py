@@ -26,7 +26,7 @@ class ChatConsumer(AsyncConsumer):
     async def websocket_receive(self, event):
         print('receive', event)
         received_data = json.loads(event['text'])
-        # print(received_data)
+        print(received_data)
         msg = received_data.get('message')
         sent_by_id = received_data.get('sent_by')
         send_to_id = received_data.get('send_to')
