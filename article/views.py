@@ -128,11 +128,10 @@ class MyArticleView(APIView, PaginationHandlerMixin):
 class SearchView(APIView):
 
     def get(self, request):
-        es = Elasticsearch(es_url)
 
-        # 검색어
-        search_words = request.GET.get('search')
-        # search_words = request.query_params.get('words', '').strip()
+        search_words = request.query_params.get('words', '').strip()
+        if search_words == '':
+            return Response({'message': '검색어를 입력해 주세요.'}, status=status.HTTP_404_NOT_FOUND)
         
         if not search_words:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'search word param is missing'})
