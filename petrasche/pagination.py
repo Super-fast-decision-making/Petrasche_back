@@ -2,7 +2,7 @@ from rest_framework.pagination import PageNumberPagination
 
 
 class BasePagination(PageNumberPagination):
-    # 페이지 사이즈를 지정할 query_param 문자열 지정 ex) /?page_size=5
+    # 페이지 사이즈를 지정할 query_param 문자열 지정 ex) /?page=5
     page_size_query_param = 'page'
 
 class PaginationHandlerMixin(object):
