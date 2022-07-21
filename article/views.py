@@ -97,14 +97,11 @@ class MyArticleView(APIView, PaginationHandlerMixin):
         articles = Article.objects.filter(user=user).order_by('-id')
         page = self.paginate_queryset(articles)
         if page != None:
-            # 페이지네이션 처리된 결과를 serializer에 담아서 결과 값 가공
             serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
-        # 페이지네이션 처리 필요 없는 경우
         else:
             serializer = self.serializer_class(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        # serializer = ArticleSerializer(articles, many=True)
-        # return Response(serializer.data, status=status.HTTP_200_OK)
+
         
 
     def put(self, request, pk):
@@ -128,14 +125,12 @@ class MyArticleView(APIView, PaginationHandlerMixin):
 class SearchView(APIView):
 
     def get(self, request):
-
         search_words = request.query_params.get('words', '').strip()
         if search_words == '':
             return Response({'message': '검색어를 입력해 주세요.'}, status=status.HTTP_404_NOT_FOUND)
         
         if not search_words:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'search word param is missing'})
-
         res = requests.get(es_url+'/article/_search?q='+ search_words)
         response = res.json()
         article_pk_list = []
