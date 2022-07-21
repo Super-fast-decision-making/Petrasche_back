@@ -8,12 +8,15 @@ from django.db.models import Count
 from user.models import User
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework import status, permissions
 import requests
 
 es_url = 'http://localhost:9200'
 from petrasche.pagination import PaginationHandlerMixin, BasePagination
 
 class ArticleView(APIView):
+    permission_classes = [permissions.AllowAny]
+
     def get(self, request):
         articles = Article.objects.all().order_by('-created_at')[:20]
         serializer = ArticleSerializer(articles, many=True)
@@ -141,9 +144,11 @@ class SearchView(APIView):
         return Response(ArticleSerializer(articles, many=True).data, status=status.HTTP_200_OK)
 
 class ArticleScrollView(APIView):
+    authentication_classes=[JWTAuthentication]
+
     def get(self, request,page):
         start = (int(page))*20
         end = start + 20
-        articles = Article.objects.all()[start:end]
+        articles = Article.objects.all().order_by('created_at')[start:end]
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
