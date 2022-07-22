@@ -3,7 +3,7 @@ from rest_framework import serializers
 from article.models import Article, Image, Comment
 from article.s3upload import upload as s3
 from datetime import datetime
-from user.models import UserFollowing, PetProfile
+from user.models import UserFollowing, PetProfile, UserProfile
 from dm.serializers import BaseSerializer
 from user.models import UserFollowing
 import requests
@@ -39,6 +39,11 @@ class ArticleSerializer(BaseSerializer):
     user_pet = serializers.IntegerField(write_only=True, required=False)
     author = serializers.SerializerMethodField()
     user_following = serializers.SerializerMethodField()
+    profile_img = serializers.SerializerMethodField()
+
+    def get_profile_img(self, obj):
+        user_profiles = UserProfile.objects.filter(user=obj.user.id)
+        return [user_profile.profile_img for user_profile in user_profiles]
 
     def get_user_following(self, obj):
         users = UserFollowing.objects.filter(following_user_id=obj.user.id)
@@ -116,4 +121,4 @@ class ArticleSerializer(BaseSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author', 'date', 'user_following','user_pet','article_pet_list','like_users']
+        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author', 'date', 'user_following','user_pet','article_pet_list','like_users', 'profile_img']
