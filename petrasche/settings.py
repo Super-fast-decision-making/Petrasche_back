@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'user',
     'article',
     'dm',
+    'walk',
+    'ckeditor',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

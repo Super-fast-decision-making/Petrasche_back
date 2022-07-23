@@ -209,7 +209,6 @@ class HistoryView(APIView):
                             "type" : "like",
                         }
                         history_list.append(doc)
-
             except AttributeError:
                 try:
                     if history.user == user:
@@ -239,8 +238,8 @@ class HistoryView(APIView):
                     history_list.append(doc)
 
         return Response(history_list, status=status.HTTP_200_OK)
-
 # 비밀번호 인증
+
 class AuthPasswordView(APIView):
 
     def post(self, request):
