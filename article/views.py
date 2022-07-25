@@ -131,7 +131,6 @@ class SearchView(APIView):
 
     def get(self, request):
         search_words = request.query_params.get('words', '').strip()
-        print("search_words : ",search_words)
         if search_words == '':
             return Response({'message': '검색어를 입력해 주세요.'}, status=status.HTTP_404_NOT_FOUND)
         
@@ -140,12 +139,10 @@ class SearchView(APIView):
 
         
         if search_words.startswith('#'):
-            print(search_words)
             pattern = '#([0-9a-zA-Z가-힣]*)'
             hash_w = re.compile(pattern)
 
             hashtags = hash_w.findall(search_words)
-            print(hashtags)
             res = requests.get(es_url+'/hashtag/_search?q='+ hashtags[0])
         else:
             res = requests.get(es_url+'/article/_search?q='+ search_words)
