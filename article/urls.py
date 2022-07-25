@@ -11,4 +11,5 @@ urlpatterns = [
     path('myarticle/<int:pk>/', views.MyArticleView.as_view()),
     path('<int:pk>/', views.ArticleDetailView.as_view()),
     path('search/', views.SearchView.as_view()),
+    path('hashtagsearch/', views.HashTagSearchView.as_view()),
 ]
