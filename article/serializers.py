@@ -84,7 +84,6 @@ class ArticleSerializer(BaseSerializer):
         for imageurl in imgurls:
             image_data = {'article': article, 'imgurl': imageurl}
             Image.objects.create(**image_data)
-           
         # es indexing 
         es_body = {
             "pk": article.pk,
