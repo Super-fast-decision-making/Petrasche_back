@@ -11,7 +11,6 @@ class ChatConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
         print('connected', event)
         user = self.scope['user']
-        # user = self.scope.get('user')
         chat_room = f'user_chatroom_{user.id}'
         print(chat_room, user)
         self.chat_room = chat_room
@@ -53,7 +52,6 @@ class ChatConsumer(AsyncConsumer):
         # self_user = self.scope['user']
         self_user = sent_by_user
         
-        # print(self_user, "53")
         response = {
             'message': msg,
             'sent_by': self_user.id,
@@ -110,5 +108,7 @@ class ChatConsumer(AsyncConsumer):
 
     @database_sync_to_async
     def create_chat_message(self, header, sender, msg):
+        print(sender, "113")
         Message.objects.create(header=header, sender=sender, message=msg)
+        
 
