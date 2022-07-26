@@ -8,6 +8,7 @@ from elasticsearch import Elasticsearch
 import requests
 
 
+
 class SearchView(APIView):
 
     def get(self, request):
