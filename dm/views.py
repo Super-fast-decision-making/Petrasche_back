@@ -29,9 +29,7 @@ class ChatView(APIView):
     authentication_classes=[JWTAuthentication]
     
     def get(self, request, pk):
-        # user = request.user
         header = Header.objects.filter(pk=pk)
-        # header = Header.objects.by_user(user=user.id).prefetch_related('header').order_by('-created_at')
         header_serializer = HeaderSerializer(header, many=True, context={'header':header}).data
         return Response(header_serializer, status=200)
                 
