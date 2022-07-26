@@ -11,7 +11,7 @@ class WalkingMateSerializer(BaseSerializer):
 
     class Meta:
         model = WalkingMate
-        fields = ['host','host_name', 'image', 'date', 'start_time', 'end_time', 'region', 
+        fields = ['id','host','host_name', 'image', 'date', 'start_time', 'end_time', 'region', 
         'place', 'gender', 'size', 'people_num', 'contents', 'attending_user', 
         'status', 'created_at', 'updated_at']
         
