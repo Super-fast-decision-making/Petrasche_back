@@ -24,4 +24,5 @@ urlpatterns = [
     path('dm/', include('dm.urls')),
     path('walk/', include('walk.urls')),
     path('search/', include('search_app.urls')),
+    path('tournament/', include('tournament.urls')),
 ]
