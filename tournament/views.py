@@ -4,6 +4,7 @@ from rest_framework import status
 from tournament import serializers
 from tournament.models import TournamentAttendant, PetEventPeriod
 from tournament.serializers import TournamentAttendantSerializer, PetEventPeriodSerializer
+from datetime import datetime
 
 class TournamentAttendantView(APIView):
     def get(self, request):
@@ -13,6 +14,9 @@ class TournamentAttendantView(APIView):
     
     def post(self, request):
         request.data['user_id'] = request.user.id
+        pet_event = PetEventPeriod.objects.get(id=request.data['event'])
+        if pet_event.tournament_item.filter(user_id=request.user.id).exists():
+            return Response({"message":"이벤트에 이미 참여 되었습니다."}, status=status.HTTP_400_BAD_REQUEST)
         serializer = TournamentAttendantSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -38,3 +42,21 @@ class PetEventPeriodView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PetEventPeriodDetailView(APIView):
+    def get(self, request, pk):
+        period = PetEventPeriod.objects.get(pk=pk)
+        if period.end_time < datetime.now():
+            return Response({"message" : "종료된 이벤트 입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        elif period.start_time > datetime.now():
+            return Response({"message" : "시작되지 않은 이벤트 입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = PetEventPeriodSerializer(period)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, pk):
+        try:
+            period = PetEventPeriod.objects.get(pk=pk)
+        except:
+            return Response({"message" : "존재하지 않는 이벤트 입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        period.delete()
+        return Response({"message" : "삭제 완료"}, status=status.HTTP_200_OK)

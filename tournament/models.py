@@ -6,9 +6,15 @@ class TournamentAttendant(BaseModel):
     image = models.URLField("이벤트이미지", default="")
     point = models.IntegerField("포인트", default=0)
 
+    def __str__(self):
+        return self.user_id.username        
+
 class PetEventPeriod(BaseModel):
     tournament_item = models.ManyToManyField(TournamentAttendant, verbose_name="토너먼트", blank=True)
     event_name = models.CharField("이벤트", max_length=100)
     event_desc = models.CharField("이벤트설명", max_length=500)
     start_time = models.DateTimeField("시작시간")
     end_time = models.DateTimeField("종료시간")
+
+    def __str__(self):
+        return self.event_name
