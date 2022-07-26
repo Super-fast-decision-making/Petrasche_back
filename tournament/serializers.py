@@ -20,6 +20,7 @@ class TournamentAttendantSerializer(serializers.ModelSerializer):
 
 class PetEventPeriodSerializer(serializers.ModelSerializer):
     pet = serializers.SerializerMethodField()
+    rank_pet = serializers.SerializerMethodField()
     event_start = serializers.SerializerMethodField()
     event_end = serializers.SerializerMethodField()
 
@@ -28,9 +29,6 @@ class PetEventPeriodSerializer(serializers.ModelSerializer):
     
     def get_event_end(self, obj):
         return obj.end_time.strftime("%Y년%m월%d일")
-
-    # def get_event_pet_img(self, obj):
-        # return [img.image for img in obj.tournament_item.all()]
 
     def get_pet(self, obj):
         pet = []
@@ -43,9 +41,20 @@ class PetEventPeriodSerializer(serializers.ModelSerializer):
             pet.append(doc)
         return pet
 
+    def get_rank_pet(self, obj):
+        rank = obj.tournament_item.all().order_by('-point')[:5]
+        pet = []
+        for img in rank:
+            doc = {
+                'id': img.id,
+                'image': img.image,
+                'point': img.point,
+            }
+            pet.append(doc)
+        return pet
 
     class Meta:
         model = PetEventPeriod
-        fields = ["id", "event_name", "event_desc", "pet", "event_start", "event_end"]
+        fields = ["id", "event_name", "event_desc", "pet", "rank_pet", "event_start", "event_end"]
 
     
