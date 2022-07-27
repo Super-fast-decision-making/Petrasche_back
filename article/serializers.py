@@ -125,7 +125,8 @@ class ArticleSerializer(BaseSerializer):
         instance.content = validated_data.get('content', instance.content)
         instance.is_active = validated_data.get('is_active', instance.is_active)
         instance.save()
-        
+
+
         # es update
         es_body = {
             "doc": {
@@ -134,6 +135,7 @@ class ArticleSerializer(BaseSerializer):
             }
         }
         requests.post(es_url+f"/article/_update/{instance.pk}", json=es_body)
+
         
         # es hashtag update
         pattern = '#([0-9a-zA-Z가-힣]*)'
@@ -152,6 +154,7 @@ class ArticleSerializer(BaseSerializer):
             }
         }
         requests.post(es_url+f"/hashtag/_update/{instance.pk}", json=es_hashtag_body)
+
         return instance
 
     class Meta:
