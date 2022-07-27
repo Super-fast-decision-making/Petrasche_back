@@ -12,7 +12,10 @@ class WalkingMateSerializer(BaseSerializer):
         return obj.host.username
     
     def get_left_seat(self,obj):
-        return int(obj.people_num[0])-1-(obj.attending_user.count())
+        try:
+            return int(obj.people_num[0])-1-(obj.attending_user.count())
+        except:
+            return 0
         
     class Meta:
         model = WalkingMate
