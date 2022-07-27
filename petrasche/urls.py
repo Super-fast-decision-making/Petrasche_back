@@ -22,5 +22,7 @@ urlpatterns = [
     path('article/', include('article.urls')),
     path('user/', include('user.urls')),
     path('dm/', include('dm.urls')),
+    path('walk/', include('walk.urls')),
     path('search/', include('search_app.urls')),
+    path('tournament/', include('tournament.urls')),
 ]

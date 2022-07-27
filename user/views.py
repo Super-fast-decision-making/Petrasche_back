@@ -67,7 +67,6 @@ class TokenObtainPairView(TokenObtainPairView):
 class KakaoLoginView(APIView):
     permission_classes = [permissions.AllowAny]
     def post(self, request):
-        access_token = request.data['access_token']
         email = request.data['email']
         username = request.data['username']
 
@@ -82,7 +81,7 @@ class KakaoLoginView(APIView):
             elif user and (user.password!=None):
                 return Response({"error": "해당 카카오 이메일을 사용해 일반 회원가입한 회원입니다"}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
-        #     # 기존에 가입된 유저가 없으면 새로 가입           
+        # 기존에 가입된 유저가 없으면 새로 가입           
             new_user = User.objects.create(
                 username=username,
                 email=email,

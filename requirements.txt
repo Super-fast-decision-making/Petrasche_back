@@ -14,7 +14,7 @@ colorama==0.4.5
 constantly==15.1.0
 cryptography==37.0.4
 daphne==3.0.2
-decorator==5.1.1
+decorator==5.1.1py
 defusedxml==0.7.1
 Django==4.0.6
 django-allauth==0.51.0

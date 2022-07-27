@@ -37,7 +37,6 @@ class ChatView(APIView):
             header = Header.objects.get(sender=sender.id, receiver=receiver.id)
             header_serializer = HeaderSerializer(header).data
             return Response(header_serializer, status=200)
-        
         except Header.DoesNotExist:
             #존재하는 채팅방이 없다면, 새롭게 생성
             Header.objects.create(
@@ -45,3 +44,4 @@ class ChatView(APIView):
                 receiver=receiver, 
             )
             return Response({"msg": "채팅방 생성!"}, status=200)
+                
