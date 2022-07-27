@@ -41,8 +41,11 @@ class HeaderSerializer(BaseSerializer):
     class Meta:
         model = Header
         fields = ["id", "sender", "receiver", "last_message", "date", "messages"]
-        
+        # fields = ["__all__"]
+    
     def get_last_message(self, obj):
         last_message = obj.header
         return MessageSerializer(last_message.last()).data
+    
+    
         
