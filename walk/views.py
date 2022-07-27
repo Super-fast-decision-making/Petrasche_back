@@ -66,11 +66,14 @@ class WalkingMateDetailView(APIView):
         return Response(serializer, status=status.HTTP_200_OK)
 
     # 여기서 put 메소드는 산책 모임 참여자 추가
-    def put(self, request, pk):
-        article = WalkingMate.objects.get(pk=pk)
-        article.attending_user.add(request.user.id)
-        return Response({"message" : "추가 성공"}, status=status.HTTP_200_OK)
-
+    # def put(self, request, pk):
+        
+    #     article = WalkingMate.objects.get(pk=pk)
+        
+        
+    #     article.attending_user.add(request.user.id)
+        
+    #     return Response({"message" : "추가 성공"}, status=status.HTTP_200_OK)
 
     def delete(self, request, pk):
         article = WalkingMate.objects.get(pk=pk)
@@ -78,4 +81,15 @@ class WalkingMateDetailView(APIView):
         return Response({"message" : "삭제 성공"},status=status.HTTP_200_OK)
     
 
+#산책 모임 참여자 추가/삭제
+class WalkingMateAttenderView(APIView):
+    def post (self, request,pk):
+        article = WalkingMate.objects.get(pk=pk)
+        article.attending_user.add(request.user.id)
+        return Response({"message" : "추가 성공"}, status=status.HTTP_200_OK)
+
+    def delete(self, request, pk):
+        article = WalkingMate.objects.get(pk=pk)
+        article.attending_user.remove(request.user.id)
+        return Response({"message" : "삭제 성공"},status=status.HTTP_200_OK)
 
