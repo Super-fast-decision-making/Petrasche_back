@@ -17,8 +17,7 @@ class HeaderView(APIView):
         header_serializer = HeaderSerializer(header, many=True, context={'header':header}).data
         return Response(header_serializer, status=200)
     
-        
-          
+
 class ChatView(APIView):
     authentication_classes=[JWTAuthentication]
     
