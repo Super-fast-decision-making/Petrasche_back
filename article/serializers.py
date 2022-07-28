@@ -9,8 +9,8 @@ from dm.serializers import BaseSerializer
 from user.models import UserFollowing
 import requests
 
-es_url = 'http://localhost:9200'
-# es_url = 'http://15.164.171.221:9200/'
+# es_url = 'http://localhost:9200/'
+es_url = 'http://54.180.152.36:9200/'
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:

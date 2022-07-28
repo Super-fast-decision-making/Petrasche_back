@@ -12,8 +12,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status, permissions
 import requests
 
-es_url = 'http://localhost:9200'
-# es_url = 'http://15.164.171.221:9200/'
+# es_url = 'http://localhost:9200/'
+es_url = 'http://54.180.152.36:9200/'
 
 from petrasche.pagination import PaginationHandlerMixin, BasePagination
 
