@@ -4,7 +4,8 @@ from channels.db import database_sync_to_async
 from dm.models import Message, Header
 from user.models import User
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+import locale
+locale.setlocale(locale.LC_TIME, 'ko_KR')
 
 class ChatConsumer(AsyncConsumer):
     
@@ -30,7 +31,6 @@ class ChatConsumer(AsyncConsumer):
         sent_by_id = received_data.get('sent_by')
         send_to_id = received_data.get('send_to')
         header_id = received_data.get('header_id')
-        print(sent_by_id, send_to_id, "34")
 
         if not msg:
             print('Error:: empty message')
