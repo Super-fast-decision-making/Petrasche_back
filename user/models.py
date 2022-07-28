@@ -93,7 +93,7 @@ class UserProfile(models.Model):
     phone = models.CharField("폰 번호",validators = [phoneNumberRegex], max_length = 13, unique = True, null=True, blank=True)
     introduction = models.TextField("자기 소개글", null=True, blank=True, default="유저님의 마이 페이지입니다")
     address = models.TextField("주소", null=True, blank=True)
-    profile_img = models.URLField("프로필 이미지", max_length=200, null=True, blank=True, default="https://cdn.pixabay.com/photo/2017/09/25/13/12/cocker-spaniel-2785074__480.jpg" )
+    profile_img = models.URLField("프로필 이미지", max_length=500, null=True, blank=True, default="https://cdn.pixabay.com/photo/2017/09/25/13/12/cocker-spaniel-2785074__480.jpg" )
 
 
 

@@ -8,10 +8,13 @@ from elasticsearch import Elasticsearch
 import requests
 
 
+
 class SearchView(APIView):
 
     def get(self, request):
         es_url = 'http://localhost:9200'
+        # es_url = 'http://15.164.171.221:9200/'
+        
         es = Elasticsearch(es_url)
 
         # 검색어

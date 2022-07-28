@@ -44,6 +44,7 @@ CORS_ALLOWED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'tournament',
     'search_app',
     'channels',
     'user',
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
     'dm',
     'walk',
     'ckeditor',
+    'ckeditor_uploader',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -116,6 +118,21 @@ DATABASES = {
     }
 }
 
+# POSTGRESQL_NAME = env('POSTGRESQL_NAME')
+# POSTGRESQL_USER = env('POSTGRESQL_USER')
+# POSTGRESQL_PASSWORD = env('POSTGRESQL_PASSWORD')
+# POSTGRESQL_HOST = env('POSTGRESQL_HOST')
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': POSTGRESQL_NAME,
+#         'USER': POSTGRESQL_USER,
+#         'PASSWORD': POSTGRESQL_PASSWORD,
+#         'HOST': POSTGRESQL_HOST,
+#         'PORT': '5432',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -151,8 +168,15 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
 
+
+STATIC_ROOT = BASE_DIR / 'static'
+STATIC_URL = '/static/'
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 

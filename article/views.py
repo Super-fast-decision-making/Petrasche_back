@@ -1,3 +1,4 @@
+import re
 from elasticsearch import Elasticsearch
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,6 +13,8 @@ from rest_framework import status, permissions
 import requests
 
 es_url = 'http://localhost:9200'
+# es_url = 'http://15.164.171.221:9200/'
+
 from petrasche.pagination import PaginationHandlerMixin, BasePagination
 
 class ArticleView(APIView):
@@ -120,6 +123,7 @@ class MyArticleView(APIView, PaginationHandlerMixin):
         article.delete()
         
         requests.delete(es_url + f"/article/{pk}") # es delete
+        requests.delete(es_url + f"/hashtag/{pk}") # es hashtag delete
         
         return Response({"massege" : "삭제 성공"},status=status.HTTP_200_OK)
     
@@ -134,7 +138,16 @@ class SearchView(APIView):
         
         if not search_words:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'search word param is missing'})
-        res = requests.get(es_url+'/article/_search?q='+ search_words)
+
+        
+        if search_words.startswith('#'):
+            pattern = '#([0-9a-zA-Z가-힣]*)'
+            hash_w = re.compile(pattern)
+
+            hashtags = hash_w.findall(search_words)
+            res = requests.get(es_url+'/hashtag/_search?q='+ hashtags[0])
+        else:
+            res = requests.get(es_url+'/article/_search?q='+ search_words)
         response = res.json()
         article_pk_list = []
         for obj in response['hits']['hits']:
@@ -142,6 +155,27 @@ class SearchView(APIView):
         articles = Article.objects.filter(pk__in=article_pk_list)
         
         return Response(ArticleSerializer(articles, many=True).data, status=status.HTTP_200_OK)
+
+
+class HashTagSearchView(APIView):
+
+    def get(self, request):
+        search_words = request.query_params.get('words', '').strip()
+        if search_words == '':
+            return Response({'message': '검색어를 입력해 주세요.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if not search_words:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'search word param is missing'})
+        res = requests.get(es_url+'/hashtag/_search?q='+ search_words)
+        response = res.json()
+        article_pk_list = []
+        for obj in response['hits']['hits']:
+            article_pk_list.append(obj["_source"]["pk"])
+        articles = Article.objects.filter(pk__in=article_pk_list)
+        
+        return Response(ArticleSerializer(articles, many=True).data, status=status.HTTP_200_OK)
+
+
 
 class ArticleScrollView(APIView):
     authentication_classes=[JWTAuthentication]
