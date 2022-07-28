@@ -12,7 +12,7 @@ from user.models import BaseModel, User
 class WalkingMate(BaseModel):#relation_name
     host=models.ForeignKey('user.User', related_name='event', verbose_name="호스트", on_delete=models.CASCADE)
     image = models.URLField(max_length=200, null=True, blank=True)
-    date= models.DateField('날짜', null=True)
+    start_date= models.DateField('날짜', null=True)
     start_time=models.DateTimeField('시작 시간')
     end_time=models.DateTimeField('종료 시간')
     region=models.CharField('지역', max_length=30)
