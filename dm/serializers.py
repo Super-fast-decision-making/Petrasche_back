@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from dm.models import Message, Header
 from datetime import datetime
-from user.models import BaseModel, UserProfile
+from user.models import BaseModel
 
 class BaseSerializer(serializers.ModelSerializer):
     date = serializers.SerializerMethodField()
@@ -37,7 +37,14 @@ class HeaderSerializer(BaseSerializer):
     receiver = serializers.SlugRelatedField(read_only=True, slug_field='username')
     messages = MessageSerializer(many=True, read_only=True, source='header')
     last_message = serializers.SerializerMethodField()
-        
+    # sender_img = serializers.SerializerMethodField()
+    # 
+    # def get_sender_img(self, obj):
+        # try:
+            # return obj.userprofile.profile_img
+        # except:
+            # return f'https://cdn.pixabay.com/photo/2017/09/25/13/12/cocker-spaniel-2785074__480.jpg'
+    
     class Meta:
         model = Header
         fields = ["id", "sender", "receiver", "last_message", "date", "messages"]

@@ -10,7 +10,8 @@ class ChatConsumer(AsyncConsumer):
     
     async def websocket_connect(self, event):
         print('connected', event)
-        user = self.scope['user']
+        user = self.scope['url_route']['kwargs']['username']
+        # user = self.scope['user']
         chat_room = f'user_chatroom_{user.id}'
         print(chat_room, user)
         self.chat_room = chat_room
@@ -30,7 +31,6 @@ class ChatConsumer(AsyncConsumer):
         sent_by_id = received_data.get('sent_by')
         send_to_id = received_data.get('send_to')
         header_id = received_data.get('header_id')
-        print(sent_by_id, send_to_id, "34")
 
         if not msg:
             print('Error:: empty message')
