@@ -99,10 +99,8 @@ class ArticleSerializer(BaseSerializer):
         hash_w = re.compile(pattern)
 
         hashtags = hash_w.findall(article.content)
-        print("해시태그 추출: ", hashtags)
         es_hashtags_input = ""
         for tag in hashtags:
-            print("tag => ", tag)
             es_hashtags_input += " "+tag
             
         es_hashtag_body = {
