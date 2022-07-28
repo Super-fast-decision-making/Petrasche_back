@@ -7,7 +7,6 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class ChatConsumer(AsyncConsumer):
-    authentication_classes=[JWTAuthentication]
     
     async def websocket_connect(self, event):
         print('connected', event)
@@ -26,11 +25,12 @@ class ChatConsumer(AsyncConsumer):
     async def websocket_receive(self, event):
         print('receive', event)
         received_data = json.loads(event['text'])
-        # print(received_data)
+        print(received_data)
         msg = received_data.get('message')
         sent_by_id = received_data.get('sent_by')
         send_to_id = received_data.get('send_to')
         header_id = received_data.get('header_id')
+        print(sent_by_id, send_to_id, "34")
 
         if not msg:
             print('Error:: empty message')
@@ -49,7 +49,9 @@ class ChatConsumer(AsyncConsumer):
         await self.create_chat_message(header_obj, sent_by_user, msg)
 
         other_user_chat_room = f'user_chatroom_{send_to_id}'
-        self_user = self.scope['user']
+        # self_user = self.scope['user']
+        self_user = sent_by_user
+        
         response = {
             'message': msg,
             'sent_by': self_user.id,
@@ -78,7 +80,7 @@ class ChatConsumer(AsyncConsumer):
 
 
     async def chat_message(self, event):
-        print('chat_message', event)
+        print('chat_message84', event)
         await self.send({
             'type': 'websocket.send',
             'text': event['text']
@@ -97,7 +99,7 @@ class ChatConsumer(AsyncConsumer):
     @database_sync_to_async
     def get_header(self, header_id):
         qs = Header.objects.filter(id=header_id)
-        # qs = Header.objects.create()
+        # qs = Header.objects.get_or_create(id=header_id)
         if qs.exists():
             obj = qs.first()
         else:
@@ -106,4 +108,7 @@ class ChatConsumer(AsyncConsumer):
 
     @database_sync_to_async
     def create_chat_message(self, header, sender, msg):
+        print(sender, "113")
         Message.objects.create(header=header, sender=sender, message=msg)
+        
+

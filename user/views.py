@@ -67,11 +67,8 @@ class TokenObtainPairView(TokenObtainPairView):
 class KakaoLoginView(APIView):
     permission_classes = [permissions.AllowAny]
     def post(self, request):
-        access_token = request.data['access_token']
         email = request.data['email']
         username = request.data['username']
-
-        # {'access_token': 'DFOOTfzQtsNLr0AdCbuHR-mVMgIP3UsuB23KFSRpCj1y6gAAAYIOokiv', 'token_type': 'bearer', 'refresh_token': 'IAOdwEjWGviwfXRL-VA5mqv9zqRUYne3FaLQmu9fCj1y6gAAAYIOokiu', 'expires_in': 7199, 'scope': 'account_email gender profile_nickname', 'refresh_token_expires_in': 5183999, 'email': 'tulip_han@naver.com', 'username': '한예슬'}        
         try: 
             # 기존에 가입된 유저가 있다면 로그인
             user = User.objects.get(email=email)
@@ -82,7 +79,7 @@ class KakaoLoginView(APIView):
             elif user and (user.password!=None):
                 return Response({"error": "해당 카카오 이메일을 사용해 일반 회원가입한 회원입니다"}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
-        #     # 기존에 가입된 유저가 없으면 새로 가입           
+        # 기존에 가입된 유저가 없으면 새로 가입           
             new_user = User.objects.create(
                 username=username,
                 email=email,
@@ -179,7 +176,7 @@ class PetDetailView(APIView):
     def delete(self, request, pk):
         pet = PetProfile.objects.get(pk=pk)
         pet.delete()
-        return Response({"massege" : "삭제 성공"},status=status.HTTP_200_OK)
+        return Response({"massege" : "프로필이 삭제되었습니다."},status=status.HTTP_200_OK)
 
 class HistoryView(APIView):
     authentication_classes=[JWTAuthentication]
@@ -209,7 +206,6 @@ class HistoryView(APIView):
                             "type" : "like",
                         }
                         history_list.append(doc)
-
             except AttributeError:
                 try:
                     if history.user == user:
@@ -239,8 +235,8 @@ class HistoryView(APIView):
                     history_list.append(doc)
 
         return Response(history_list, status=status.HTTP_200_OK)
-
 # 비밀번호 인증
+
 class AuthPasswordView(APIView):
 
     def post(self, request):

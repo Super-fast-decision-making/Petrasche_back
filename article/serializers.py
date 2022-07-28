@@ -1,14 +1,16 @@
 from asyncore import write
+import re
 from rest_framework import serializers
 from article.models import Article, Image, Comment
 from article.s3upload import upload as s3
 from datetime import datetime
-from user.models import UserFollowing, PetProfile
+from user.models import UserFollowing, PetProfile, UserProfile
 from dm.serializers import BaseSerializer
 from user.models import UserFollowing
 import requests
 
 es_url = 'http://localhost:9200'
+# es_url = 'http://15.164.171.221:9200/'
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,7 +25,6 @@ class CommentSerializer(BaseSerializer):
         if obj.user:
             return obj.user.username
         return "삭제된 사용자"
-
     class Meta:
         model = Comment
         fields = '__all__'
@@ -40,6 +41,11 @@ class ArticleSerializer(BaseSerializer):
     user_pet = serializers.IntegerField(write_only=True, required=False)
     author = serializers.SerializerMethodField()
     user_following = serializers.SerializerMethodField()
+    profile_img = serializers.SerializerMethodField()
+
+    def get_profile_img(self, obj):
+        user_profiles = UserProfile.objects.filter(user=obj.user.id)
+        return [user_profile.profile_img for user_profile in user_profiles]
 
     def get_user_following(self, obj):
         users = UserFollowing.objects.filter(following_user_id=obj.user.id)
@@ -80,7 +86,6 @@ class ArticleSerializer(BaseSerializer):
         for imageurl in imgurls:
             image_data = {'article': article, 'imgurl': imageurl}
             Image.objects.create(**image_data)
-           
         # es indexing 
         es_body = {
             "pk": article.pk,
@@ -88,6 +93,24 @@ class ArticleSerializer(BaseSerializer):
             "content": article.content
         }
         requests.post(es_url+f"/article/_doc/{article.pk}", json=es_body)
+        
+        # hashtags
+        pattern = '#([0-9a-zA-Z가-힣]*)'
+        hash_w = re.compile(pattern)
+
+        hashtags = hash_w.findall(article.content)
+        print("해시태그 추출: ", hashtags)
+        es_hashtags_input = ""
+        for tag in hashtags:
+            print("tag => ", tag)
+            es_hashtags_input += " "+tag
+            
+        es_hashtag_body = {
+            "pk": article.pk,
+            "hashtags": es_hashtags_input
+        }
+        requests.post(es_url+f"/hashtag/_doc/{article.pk}", json=es_hashtag_body)
+
         
         try:
             pet = PetProfile.objects.get(id=user_pet)
@@ -102,7 +125,8 @@ class ArticleSerializer(BaseSerializer):
         instance.content = validated_data.get('content', instance.content)
         instance.is_active = validated_data.get('is_active', instance.is_active)
         instance.save()
-        print(11111)
+
+
         # es update
         es_body = {
             "doc": {
@@ -111,10 +135,28 @@ class ArticleSerializer(BaseSerializer):
             }
         }
         requests.post(es_url+f"/article/_update/{instance.pk}", json=es_body)
-        print(22222)
-        print(instance.pk)
+
+        
+        # es hashtag update
+        pattern = '#([0-9a-zA-Z가-힣]*)'
+        hash_w = re.compile(pattern)
+
+        hashtags = hash_w.findall(instance.content)
+        print("해시태그 추출: ", hashtags)
+        es_hashtags_input = ""
+        for tag in hashtags:
+            print("tag => ", tag)
+            es_hashtags_input += " "+tag
+        
+        es_hashtag_body = {
+            "doc": {
+                "hashtags": es_hashtags_input
+            }
+        }
+        requests.post(es_url+f"/hashtag/_update/{instance.pk}", json=es_hashtag_body)
+
         return instance
 
     class Meta:
         model = Article
-        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author', 'date', 'user_following','user_pet','article_pet_list','like_users']
+        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author', 'date', 'user_following','user_pet','article_pet_list','like_users', 'profile_img']

@@ -3,6 +3,8 @@ from elasticsearch import Elasticsearch, exceptions
 
 
 es_url = 'http://localhost:9200'
+# es_url = 'http://15.164.171.221:9200/'
+
 directory_path = 'path'
 res = requests.get(es_url)
 es = Elasticsearch(es_url)
