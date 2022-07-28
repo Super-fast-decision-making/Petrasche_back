@@ -4,14 +4,14 @@ from channels.db import database_sync_to_async
 from dm.models import Message, Header
 from user.models import User
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+import locale
+locale.setlocale(locale.LC_TIME, 'ko_KR')
 
 class ChatConsumer(AsyncConsumer):
     
     async def websocket_connect(self, event):
         print('connected', event)
-        user = self.scope['url_route']['kwargs']['username']
-        # user = self.scope['user']
+        user = self.scope['user']
         chat_room = f'user_chatroom_{user.id}'
         print(chat_room, user)
         self.chat_room = chat_room

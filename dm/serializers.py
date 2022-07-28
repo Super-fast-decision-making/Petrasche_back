@@ -37,17 +37,20 @@ class HeaderSerializer(BaseSerializer):
     receiver = serializers.SlugRelatedField(read_only=True, slug_field='username')
     messages = MessageSerializer(many=True, read_only=True, source='header')
     last_message = serializers.SerializerMethodField()
-    # sender_img = serializers.SerializerMethodField()
-    # 
-    # def get_sender_img(self, obj):
-        # try:
-            # return obj.userprofile.profile_img
-        # except:
-            # return f'https://cdn.pixabay.com/photo/2017/09/25/13/12/cocker-spaniel-2785074__480.jpg'
+    sender_img = serializers.SerializerMethodField()
+    receiver_img = serializers.SerializerMethodField()
     
+    def get_sender_img(self, obj):
+        profile_img = obj.sender.userprofile.profile_img
+        return profile_img
+        
+    def get_receiver_img(self, obj):
+        profile_img = obj.receiver.userprofile.profile_img
+        return profile_img
+
     class Meta:
         model = Header
-        fields = ["id", "sender", "receiver", "last_message", "date", "messages"]
+        fields = ["id", "sender", "receiver", "last_message", "date", "messages", "sender_img", "receiver_img"]
         # fields = ["__all__"]
     
     def get_last_message(self, obj):
