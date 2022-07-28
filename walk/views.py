@@ -21,7 +21,7 @@ class WalkingMateView(APIView, PaginationHandlerMixin):
     def get(self,request):
         check_region = self.request.query_params.get('region','')
         check_gender = self.request.query_params.get('gender','')
-        check_number = self.request.query_params.get('people_num','')
+        check_number = self.request.query_params.get('number','')
         check_size = self.request.query_params.get('size','')
         check_date = self.request.query_params.get('start_date','')
 
@@ -39,9 +39,11 @@ class WalkingMateView(APIView, PaginationHandlerMixin):
 
         page = self.paginate_queryset(articles)
         if page != None:
+
             serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
         else:
             serializer = self.serializer_class(articles, many=True)
+        # print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self,request):
