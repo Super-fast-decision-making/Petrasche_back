@@ -32,7 +32,7 @@ class TournamentAttendantView(APIView):
 
 class PetEventPeriodView(APIView):
     def get(self, request):
-        periods = PetEventPeriod.objects.all()
+        periods = PetEventPeriod.objects.all().order_by('-start_time')
         serializer = PetEventPeriodSerializer(periods, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
