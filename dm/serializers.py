@@ -5,6 +5,8 @@ from user.models import BaseModel
 
 class BaseSerializer(serializers.ModelSerializer):
     date = serializers.SerializerMethodField()
+    at_date = serializers.SerializerMethodField()
+    at_time = serializers.SerializerMethodField()
 
     def get_date(self, obj):
         time = datetime.now()
@@ -18,7 +20,13 @@ class BaseSerializer(serializers.ModelSerializer):
             return str(time.month-obj.created_at.month) + "달전"
         else:
             return obj.created_at
-    
+        
+    def get_at_date(self, obj):
+        return obj.created_at.strftime('%Y년 %m월 %d일 %A')
+        
+    def get_at_time(self, obj):
+        return obj.created_at.strftime('%p %I:%M')
+        
     class Meta:
         model = BaseModel
         fields = "__all__"
@@ -29,7 +37,7 @@ class MessageSerializer(BaseSerializer):
     
     class Meta:
         model = Message
-        fields = ["sender", "message", "date"]
+        fields = ["sender", "message", "date", "at_date", "at_time"]
 
 
 class HeaderSerializer(BaseSerializer):
