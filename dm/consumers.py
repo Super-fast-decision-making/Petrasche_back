@@ -122,3 +122,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
         Message.objects.create(header=header, sender=sender, message=msg)
     
 
+
