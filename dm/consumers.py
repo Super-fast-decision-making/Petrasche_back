@@ -8,7 +8,7 @@ from user.models import User
 import locale
 locale.setlocale(locale.LC_TIME, 'ko_KR')
 
-
+print("******************")
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         print('connected')
