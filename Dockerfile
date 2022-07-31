@@ -3,7 +3,7 @@ FROM python:3.8.13
 ENV PYTHONBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
-RUN apk update
+RUN apt-get -y update
 
 RUN mkdir /srv/docker-server
 ADD . /srv/docker-server
