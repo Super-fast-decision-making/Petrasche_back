@@ -1,8 +1,7 @@
-from asyncore import write
 from rest_framework import serializers
-import tournament
 from tournament.models import TournamentAttendant, PetEventPeriod
 from article.s3upload import upload as s3
+from datetime import datetime
 
 class TournamentAttendantSerializer(serializers.ModelSerializer):
     image_file = serializers.FileField(write_only=True, required=True)
@@ -27,8 +26,17 @@ class TournamentAttendantSerializer(serializers.ModelSerializer):
 class PetEventPeriodSerializer(serializers.ModelSerializer):
     pet = serializers.SerializerMethodField()
     rank_pet = serializers.SerializerMethodField()
+    active= serializers.SerializerMethodField()
     event_start = serializers.SerializerMethodField(read_only=True)
     event_end = serializers.SerializerMethodField(read_only=True)
+
+    def get_active(self, obj):
+        now = datetime.now()
+        if now > obj.start_time and now < obj.end_time:
+            return "Participation"
+        elif now < obj.start_time:
+            return "Before"
+        return "Expired"
 
     def get_event_start(self, obj):
         return obj.start_time.strftime("%Y년%m월%d일")
@@ -61,9 +69,7 @@ class PetEventPeriodSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PetEventPeriod
-        fields = ["id", "event_name", "event_desc", "pet", "rank_pet", "start_time", "end_time", "event_start", "event_end"]
+        fields = ["id", "event_name", "event_desc", "pet", "rank_pet", "start_time", "end_time", "event_start", "event_end", "active"]
 
         extra_kwargs = {
-            'start_time': {'write_only': True},
-            'end_time': {'write_only': True},
         }

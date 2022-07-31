@@ -248,4 +248,5 @@ CORS_ORIGIN_WHITELIST = [
     
     ]
 
-es_url = 'http://localhost:9200'
+# es_url = 'http://localhost:9200'
+es_url = 'http://allenpoe.iptime.org:9200/'

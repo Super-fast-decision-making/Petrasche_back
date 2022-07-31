@@ -1,10 +1,11 @@
+from time import time
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from tournament import serializers
-from tournament.models import TournamentAttendant, PetEventPeriod
+from tournament.models import TournamentAttendant, PetEventPeriod, ParticipatioTime
 from tournament.serializers import TournamentAttendantSerializer, PetEventPeriodSerializer
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class TournamentAttendantView(APIView):
     def get(self, request):
@@ -25,6 +26,17 @@ class TournamentAttendantView(APIView):
 
     def put(self, request, pk):
         pet = TournamentAttendant.objects.get(pk=pk)
+        for i in pet.peteventperiod_set.all():
+            period = PetEventPeriod.objects.get(id=i.id)
+        user = period.participants.filter(user_id=request.user.id)
+        if user.exists():
+            # 1시간에 1번 이벤트 참여 로직
+            # if user.last().participation > (datetime.now() + timedelta(hours=1)):
+            #     return Response({"message":"1시간에 1번씩 참여가 가능합니다."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message":"이미 참여하셨습니다."}, status=status.HTTP_400_BAD_REQUEST)
+        participiatiotime = ParticipatioTime.objects.create(user_id=request.user, participation=datetime.now())
+        period.participants.add(participiatiotime)
+        period.save()
         pet.point += 1
         pet.save()
         serializers = TournamentAttendantSerializer(pet)
@@ -32,7 +44,7 @@ class TournamentAttendantView(APIView):
 
 class PetEventPeriodView(APIView):
     def get(self, request):
-        periods = PetEventPeriod.objects.all()
+        periods = PetEventPeriod.objects.all().order_by('-start_time')
         serializer = PetEventPeriodSerializer(periods, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
