@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000
+    working_dir: /srv/docker-server/
+    volumes:
+      - ./:/srv/docker-server/
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+  db:
+    image: postgres:14.4-alpine
+    volumes:
+      - postgres_db: /var/lib/portgresql/data
+    environment:
+      - POSTGRESQL_NAME='petrasche'
+      - POSTGRESQL_USER='petrasche'
+      - POSTGRESQL_PASSWORD='petrasche!!!'
+    ports:
+      - "5432:5432"
+
+
+volumes:
+  postgres_db:
