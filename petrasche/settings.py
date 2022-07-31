@@ -75,7 +75,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -248,5 +248,9 @@ CORS_ORIGIN_WHITELIST = [
     
     ]
 
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1']
+
 # es_url = 'http://localhost:9200'
 es_url = 'http://allenpoe.iptime.org:9200/'
+
+
