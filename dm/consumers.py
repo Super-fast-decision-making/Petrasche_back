@@ -9,6 +9,7 @@ import locale
 locale.setlocale(locale.LC_TIME, 'ko_KR')
 
 print("******************")
+print("******************")
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         print('connected')
