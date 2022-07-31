@@ -8,7 +8,13 @@ from user.models import UserFollowing, PetProfile, UserProfile
 from dm.serializers import BaseSerializer
 from user.models import UserFollowing
 import requests
+
+
+#es_url = 'http://allenpoe.iptime.org:9200/'
+# es_url = 'http://15.164.171.221:9200/'
+
 from petrasche.settings import es_url
+
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
