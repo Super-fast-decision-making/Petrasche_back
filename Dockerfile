@@ -4,6 +4,7 @@ ENV PYTHONBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
 RUN apt-get -y update
+RUN apt-get install -y locales
 
 RUN mkdir /srv/docker-server
 ADD . /srv/docker-server
