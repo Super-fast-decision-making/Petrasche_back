@@ -52,6 +52,7 @@ class User(BaseModel, AbstractBaseUser):
 
     # is_staff에서 해당 값 사용
     is_admin = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     # id로 사용 할 필드 지정.
     # 로그인 시 USERNAME_FIELD에 설정 된 필드와 password가 사용된다.
