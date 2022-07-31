@@ -9,8 +9,12 @@ from dm.serializers import BaseSerializer
 from user.models import UserFollowing
 import requests
 
-es_url = 'http://localhost:9200'
+
+#es_url = 'http://allenpoe.iptime.org:9200/'
 # es_url = 'http://15.164.171.221:9200/'
+
+from petrasche.settings import es_url
+
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -99,10 +103,8 @@ class ArticleSerializer(BaseSerializer):
         hash_w = re.compile(pattern)
 
         hashtags = hash_w.findall(article.content)
-        print("해시태그 추출: ", hashtags)
         es_hashtags_input = ""
         for tag in hashtags:
-            print("tag => ", tag)
             es_hashtags_input += " "+tag
             
         es_hashtag_body = {
