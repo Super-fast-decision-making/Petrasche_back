@@ -12,10 +12,6 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status, permissions
 import requests
 
-
-# es_url = 'http://allenpoe.iptime.org:9200/'
-# es_url = 'http://15.164.171.221:9200/'
-
 from petrasche.settings import es_url
 
 from petrasche.pagination import PaginationHandlerMixin, BasePagination
@@ -155,7 +151,6 @@ class SearchView(APIView):
             articles = Article.objects.filter(pk__in=article_pk_list)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': '검색 결과가 없습니다.'})
-        
         return Response(ArticleSerializer(articles, many=True).data, status=status.HTTP_200_OK)
 
 
