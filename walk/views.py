@@ -53,7 +53,7 @@ class WalkingMateView(APIView, PaginationHandlerMixin):
 
         request.data['start_time']=date+' '+request.data['time'].split('~')[0]
         request.data['end_time']=date+' '+request.data['time'].split('~')[1]
-        request.data['contents']=request.data['contents'].strip('<p>').strip('</p>')
+        request.data['contents']=request.data['contents']#.strip('<p>').strip('</p>')
         serializer = WalkingMateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

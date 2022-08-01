@@ -115,7 +115,6 @@ class OnlyAuthenticatedUserView(APIView):
             else:
                 userprofile = UserProfile.objects.get(user=user)
                 user_serializer = UserProfileSerializer(userprofile, data=request.data, partial=True)
-
         if user_serializer.is_valid():
             user_serializer.save()
             return Response({"massege" : "변경되었습니다.", "response": user_serializer.data}, status=status.HTTP_200_OK)
@@ -246,3 +245,17 @@ class AuthPasswordView(APIView):
         if check_password(input_password,origin_password):
             return Response({"massege" : "인증되었습니다.", "response": request.user.id}, status=status.HTTP_200_OK)
         return Response({"massege" : "비밀번호가 일치하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# 유저 위도, 경도 정보 추가
+class UserLocationView(APIView):
+    authentication_classes=[JWTAuthentication]
+    def put(self,request, pk):
+        user = User.objects.get(pk=pk)
+        print(request.data)
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
