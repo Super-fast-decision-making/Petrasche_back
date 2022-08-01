@@ -248,4 +248,4 @@ CORS_ORIGIN_WHITELIST = [
     
     ]
 
-es_url = 'http://localhost:9200'
+es_url = 'http://3.34.188.249:9200/'
