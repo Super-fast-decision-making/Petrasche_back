@@ -105,7 +105,7 @@ class OnlyAuthenticatedUserView(APIView):
         user = User.objects.get(id=pk)
         if request.user != user:
             return Response({"error": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
-
+        
         for key, value in request.data.items():
             if key == "password":
                 if check_password(value,user.password):

@@ -24,6 +24,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
         
     #     instance.save()
     #     return instance
+
+    def update(self, instance, validated_data):
+        print("ok")
+        # for key, value in validated_data.items():
+        #     if key == "profile_img":
+                
+        #         continue
+        #     setattr(instance, key, value)
+        # instance.save()
+        return instance
+
     class Meta:
         model = UserProfile
         fields = '__all__'
