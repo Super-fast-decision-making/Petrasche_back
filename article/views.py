@@ -136,12 +136,8 @@ class SearchView(APIView):
 
     def get(self, request):
         search_words = request.query_params.get('words', '').strip()
-        if search_words == '':
+        if search_words == '' or not search_words:
             return Response({'message': '검색어를 입력해 주세요.'}, status=status.HTTP_404_NOT_FOUND)
-        
-        if not search_words:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'search word param is missing'})
-
         
         if search_words.startswith('#'):
             pattern = '#([0-9a-zA-Z가-힣]*)'
@@ -153,9 +149,12 @@ class SearchView(APIView):
             res = requests.get(es_url+'/article/_search?q='+ search_words)
         response = res.json()
         article_pk_list = []
-        for obj in response['hits']['hits']:
-            article_pk_list.append(obj["_source"]["pk"])
-        articles = Article.objects.filter(pk__in=article_pk_list)
+        try:
+            for obj in response['hits']['hits']:
+                article_pk_list.append(obj["_source"]["pk"])
+            articles = Article.objects.filter(pk__in=article_pk_list)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': '검색 결과가 없습니다.'})
         
         return Response(ArticleSerializer(articles, many=True).data, status=status.HTTP_200_OK)
 
@@ -164,17 +163,18 @@ class HashTagSearchView(APIView):
 
     def get(self, request):
         search_words = request.query_params.get('words', '').strip()
-        if search_words == '':
-            return Response({'message': '검색어를 입력해 주세요.'}, status=status.HTTP_404_NOT_FOUND)
+        if search_words == '' or not search_words:
+            return Response(data={'message': '검색 결과가 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        if not search_words:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'search word param is missing'})
         res = requests.get(es_url+'/hashtag/_search?q='+ search_words)
         response = res.json()
         article_pk_list = []
-        for obj in response['hits']['hits']:
-            article_pk_list.append(obj["_source"]["pk"])
-        articles = Article.objects.filter(pk__in=article_pk_list)
+        try:
+            for obj in response['hits']['hits']:
+                article_pk_list.append(obj["_source"]["pk"])
+            articles = Article.objects.filter(pk__in=article_pk_list)
+        except:
+            return Response(data={'message': '검색 결과가 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
         
         return Response(ArticleSerializer(articles, many=True).data, status=status.HTTP_200_OK)
 
