@@ -18,4 +18,5 @@ urlpatterns = [
     path('mypet/<int:pk>/', views.PetDetailView.as_view()),
     path('history/', views.HistoryView.as_view()),
     path('auth/', views.AuthPasswordView.as_view()),
+    path('location/<int:pk>/', views.UserLocationView.as_view()),
 ]

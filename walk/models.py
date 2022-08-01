@@ -1,5 +1,5 @@
 from django.db import models
-# from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.urls import register_converter
 from user.models import BaseModel, User
 # Create your models here.
@@ -20,6 +20,6 @@ class WalkingMate(BaseModel):#relation_name
     gender=models.CharField('참여자 성별', max_length=10)
     size=models.CharField('사이즈', max_length=30)
     people_num=models.CharField('참여자수', max_length=20)
-    contents= models.TextField('내용', blank=True, null=True)
+    contents= RichTextUploadingField('내용', blank=True, null=True)
     attending_user = models.ManyToManyField('user.User', related_name='program', verbose_name="참여자 명단", blank=True)
     status= models.BooleanField('', default=True) #False= 마감 True=마감전
