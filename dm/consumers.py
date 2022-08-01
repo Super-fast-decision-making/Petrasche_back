@@ -14,7 +14,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print('connected')
         #url에 room_id를 받아서 가져온다.
         self.room_id = self.scope['url_route']['kwargs']['room_id']
-        print(self.room_id, "17")
         self.room_group_name = 'chat_%s' % self.room_id
         print("그룹네임", self.room_group_name)
 
@@ -33,7 +32,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data):
-        
         received_data = json.loads(text_data)
         print("리시브",received_data)
         msg = received_data.get('message')
