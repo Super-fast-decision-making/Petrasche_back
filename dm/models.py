@@ -37,3 +37,6 @@ class Message(BaseModel):
         
     def __str__(self):
         return f"{self.header} /// {self.sender} : '{self.message}'"
+    
+    
+
