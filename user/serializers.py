@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import User, PetProfile, UserProfile
 from article.models import Article, Image, Comment
 from article.serializers import ArticleSerializer
+from user.s3upload import upload as s3
 
 
 EMAIL = ("@naver.com", "@gmail.com", "@kakao.com")
@@ -20,19 +21,15 @@ class PetProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    # def update(self, instance, validated_data):
-        
-    #     instance.save()
-    #     return instance
 
+    image_file = serializers.FileField(write_only=True)
+    
     def update(self, instance, validated_data):
-        print("ok")
-        # for key, value in validated_data.items():
-        #     if key == "profile_img":
-                
-        #         continue
-        #     setattr(instance, key, value)
-        # instance.save()
+        print(instance.user.id)
+        image_file = validated_data.pop('image_file')
+        url = s3(instance.user.id, image_file)
+        instance.profile_img = url
+        instance.save()
         return instance
 
     class Meta:
