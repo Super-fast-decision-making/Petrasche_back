@@ -1,7 +1,6 @@
 from datetime import datetime
 import json
-from channels.consumer import AsyncConsumer
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 from channels.db import database_sync_to_async
 from dm.models import Message, Header
 from user.models import User
@@ -14,8 +13,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print('connected')
         #url에 room_id를 받아서 가져온다.
         self.room_id = self.scope['url_route']['kwargs']['room_id']
-        print(self.room_id, "17")
+        self.user_id = self.scope['url_route']['kwargs']
+        print(self.user_id, "17")
         self.room_group_name = 'chat_%s' % self.room_id
+        
         print("그룹네임", self.room_group_name)
 
         # Join room group
@@ -33,7 +34,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data):
-        
         received_data = json.loads(text_data)
         print("리시브",received_data)
         msg = received_data.get('message')
@@ -120,6 +120,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def create_chat_message(self, header, sender, msg):
         Message.objects.create(header=header, sender=sender, message=msg)
-    
-
-
+        

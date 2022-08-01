@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from dm.models import Message, Header
 from datetime import datetime
-from user.models import BaseModel
+from user.models import BaseModel, User
+
 
 class BaseSerializer(serializers.ModelSerializer):
     date = serializers.SerializerMethodField()
@@ -32,6 +33,11 @@ class BaseSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+# 어떤 사람이 가지고 있는 header id
+
+
+
+
 class MessageSerializer(BaseSerializer):
     sender = serializers.SlugRelatedField(read_only=True, slug_field='username')
     
@@ -55,15 +61,30 @@ class HeaderSerializer(BaseSerializer):
     def get_receiver_img(self, obj):
         profile_img = obj.receiver.userprofile.profile_img
         return profile_img
+    
+    def get_last_message(self, obj):
+        last_message = obj.header
+        return MessageSerializer(last_message.last()).data
 
     class Meta:
         model = Header
         fields = ["id", "sender", "receiver", "last_message", "date", "messages", "sender_img", "receiver_img"]
         # fields = ["__all__"]
     
+    
+
+
+class UserHeaderSerializer(serializers.ModelSerializer):
+    last_message = serializers.SerializerMethodField()
+
     def get_last_message(self, obj):
-        last_message = obj.header
-        return MessageSerializer(last_message.last()).data
+        last_message = obj.sender
+        return HeaderSerializer(last_message.last()).data
+
+    class Meta:
+        model = User
+        fields =  "__all__"
+
     
     
         
