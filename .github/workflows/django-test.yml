@@ -31,14 +31,14 @@ jobs:
       - name: Create .env
         shell: bash
         env:
-            SECRET_KEY: ${{secrets.SECRET_KEY}}
-            AWSAccessKeyId: ${{secrets.AWSAccessKeyId}} 
-            AWSSecretKey: ${{secrets.AWSSecretKey}}
-            POSTGRESQL_NAME: ${{secrets.POSTGRESQL_NAME}}
-            POSTGRESQL_HOST: ${{secrets.POSTGRESQL_HOST}}
-            POSTGRESQL_USER: ${{secrets.POSTGRESQL_USER}}
-            POSTGRESQL_PASSWORD: ${{secrets.POSTGRESQL_PASSWORD}}
-             
+          SECRET_KEY: ${{secrets.SECRET_KEY}}
+          AWSAccessKeyId: ${{secrets.AWSAccessKeyId}} 
+          AWSSecretKey: ${{secrets.AWSSecretKey}}
+          POSTGRESQL_NAME: ${{secrets.POSTGRESQL_NAME}}
+          POSTGRESQL_HOST: ${{secrets.POSTGRESQL_HOST}}
+          POSTGRESQL_USER: ${{secrets.POSTGRESQL_USER}}
+          POSTGRESQL_PASSWORD: ${{secrets.POSTGRESQL_PASSWORD}}
+
         run: |
           touch .env
           echo SECRET_KEY=${{secrets.SECRET_KEY}} >> .env
@@ -51,4 +51,4 @@ jobs:
           cat .env
       - name: Run Tests
         run: |            
-            python manage.py test
+          python manage.py test
