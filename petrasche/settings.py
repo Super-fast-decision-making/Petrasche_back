@@ -249,9 +249,11 @@ CORS_ORIGIN_WHITELIST = [
     
     ]
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1']
 
+############################# 뒤에 / 붙이지 마세요!!!! ##########################
 # es_url = 'http://localhost:9200'
 es_url = 'http://allenpoe.iptime.org:9200'
+
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1']
 
 
