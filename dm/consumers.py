@@ -4,10 +4,11 @@ from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 from channels.db import database_sync_to_async
 from dm.models import Message, Header
 from user.models import User
-import locale
-locale.setlocale(locale.LC_TIME, 'ko_KR')
+# import locale
+# locale.setlocale(locale.LC_TIME, 'ko_KR')
 
-
+print("******************")
+print("******************")
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         print('connected')
