@@ -28,16 +28,27 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      - name: Run Tests
+      - name: Create .env
+        shell: bash
+        env:
+            SECRET_KEY: ${{secrets.SECRET_KEY}}
+            AWSAccessKeyId: ${{secrets.AWSAccessKeyId}} 
+            AWSSecretKey: ${{secrets.AWSSecretKey}}
+            POSTGRESQL_NAME: ${{secrets.POSTGRESQL_NAME}}
+            POSTGRESQL_HOST: ${{secrets.POSTGRESQL_HOST}}
+            POSTGRESQL_USER: ${{secrets.POSTGRESQL_USER}}
+            POSTGRESQL_PASSWORD: ${{secrets.POSTGRESQL_PASSWORD}}
+             
         run: |
-            touch .env
-            echo SECRET_KEY=${{secrets.SECRET_KEY}} >> .env
-            echo AWSAccessKeyId=${{secrets.AWSAccessKeyId}} >> .env        
-            echo AWSSecretKey=${{secrets.AWSSecretKey}} >> .env
-            echo POSTGRESQL_NAME=${{secrets.POSTGRESQL_NAME}} >> .env
-            echo POSTGRESQL_HOST=${{secrets.POSTGRESQL_HOST}} >> .env
-            echo POSTGRESQL_USER=${{secrets.POSTGRESQL_USER}} >> .env
-            echo POSTGRESQL_PASSWORD=${{secrets.POSTGRESQL_PASSWORD}} >> .env
-            echo POSTGRESQL_HOST=${{secrets.POSTGRESQL_HOST}} >> .env       
-            cat .env
+          touch .env
+          echo SECRET_KEY=${{secrets.SECRET_KEY}} >> .env
+          echo AWSAccessKeyId=${{secrets.AWSAccessKeyId}} >> .env        
+          echo AWSSecretKey=${{secrets.AWSSecretKey}} >> .env
+          echo POSTGRESQL_NAME=${{secrets.POSTGRESQL_NAME}} >> .env
+          echo POSTGRESQL_HOST=${{secrets.POSTGRESQL_HOST}} >> .env
+          echo POSTGRESQL_USER=${{secrets.POSTGRESQL_USER}} >> .env
+          echo POSTGRESQL_PASSWORD=${{secrets.POSTGRESQL_PASSWORD}} >> .env             
+          cat .env
+      - name: Run Tests
+        run: |            
             python manage.py test
