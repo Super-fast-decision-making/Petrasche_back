@@ -31,7 +31,7 @@ jobs:
       - name: Create .env
         shell: bash
         env: |
-          SECRET_KEY: ${{secrets.SECRET_KEY}}
+          SECRET_KEY: '${{secrets.SECRET_KEY}}'
           AWSAccessKeyId: ${{secrets.AWSAccessKeyId}} 
           AWSSecretKey: ${{secrets.AWSSecretKey}}
           POSTGRESQL_NAME: ${{secrets.POSTGRESQL_NAME}}
@@ -40,7 +40,7 @@ jobs:
           POSTGRESQL_PASSWORD: ${{secrets.POSTGRESQL_PASSWORD}}
         run: |
           touch .env
-          echo SECRET_KEY=${{secrets.SECRET_KEY}} .env
+          echo SECRET_KEY='${{secrets.SECRET_KEY}}' .env
           echo AWSAccessKeyId=${{secrets.AWSAccessKeyId}} .env        
           echo AWSSecretKey=${{secrets.AWSSecretKey}} .env
           echo POSTGRESQL_NAME=${{secrets.POSTGRESQL_NAME}} .env
