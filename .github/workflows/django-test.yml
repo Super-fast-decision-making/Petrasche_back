@@ -37,7 +37,7 @@ jobs:
             POSTGRESQL_HOST: ${{secrets.POSTGRESQL_HOST}}
             POSTGRESQL_USER: ${{secrets.POSTGRESQL_USER}}
             POSTGRESQL_PASSWORD: ${{secrets.POSTGRESQL_PASSWORD}}
-#         run: |
+        run: |
 #           touch .env
 #           # echo SECRET_KEY="${{secrets.SECRET_KEY}}" .env
 #           echo AWSAccessKeyId=${{secrets.AWSAccessKeyId}} .env        
