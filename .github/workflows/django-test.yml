@@ -41,13 +41,13 @@ jobs:
 
         run: |
           touch .env
-          echo SECRET_KEY=${{secrets.SECRET_KEY}} >> .env
-          echo AWSAccessKeyId=${{secrets.AWSAccessKeyId}} >> .env        
-          echo AWSSecretKey=${{secrets.AWSSecretKey}} >> .env
-          echo POSTGRESQL_NAME=${{secrets.POSTGRESQL_NAME}} >> .env
-          echo POSTGRESQL_HOST=${{secrets.POSTGRESQL_HOST}} >> .env
-          echo POSTGRESQL_USER=${{secrets.POSTGRESQL_USER}} >> .env
-          echo POSTGRESQL_PASSWORD=${{secrets.POSTGRESQL_PASSWORD}} >> .env             
+          echo SECRET_KEY=${{secrets.SECRET_KEY}} .env
+          echo AWSAccessKeyId=${{secrets.AWSAccessKeyId}} .env        
+          echo AWSSecretKey=${{secrets.AWSSecretKey}} .env
+          echo POSTGRESQL_NAME=${{secrets.POSTGRESQL_NAME}} .env
+          echo POSTGRESQL_HOST=${{secrets.POSTGRESQL_HOST}} .env
+          echo POSTGRESQL_USER=${{secrets.POSTGRESQL_USER}} .env
+          echo POSTGRESQL_PASSWORD=${{secrets.POSTGRESQL_PASSWORD}} .env             
           cat .env
       - name: Run Tests
         run: |            
