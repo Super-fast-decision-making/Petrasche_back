@@ -40,6 +40,13 @@ class PetProfileSerializer(serializers.ModelSerializer):
         )
         return petprofile
 
+    def update(self, instance, validated_data):
+        image_file = validated_data.pop('image_file')
+        url = s3(instance.user.id, image_file, instance.name)
+        instance.pet_profile_img = url
+        instance.save()
+        return instance
+
     class Meta:
         model = PetProfile
         fields = '__all__'
@@ -49,7 +56,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
     image_file = serializers.FileField(write_only=True)
     
     def update(self, instance, validated_data):
-        print(instance.user.id)
         image_file = validated_data.pop('image_file')
         url = s3(instance.user.id, image_file)
         instance.profile_img = url
