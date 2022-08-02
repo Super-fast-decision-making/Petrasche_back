@@ -31,7 +31,7 @@ class ChatView(APIView):
     # receiver(pk=pk) 채팅방 생성
     def post(self, request, pk):
         sender = request.user
-        receiver = User.objects.get(pk=pk)       
+        receiver = User.objects.get(pk=pk)     
         try:
             #존재하는 채팅방이 있다면, 채팅방을 가져온다.
             header = Header.objects.get(sender=sender.id, receiver=receiver.id)
