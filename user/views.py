@@ -148,12 +148,12 @@ class PetView(APIView):
 
     def post(self, request):
         user = request.user
-
         request.data['user'] = user.id
 
         serializer=PetProfileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            print("hi")
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -30,7 +30,6 @@ class ArticleView(APIView):
 
 
     def post(self, request):
-        print(request.data)
         user = request.user
         request.data['user'] = user.id
         serializer = ArticleSerializer(data=request.data)

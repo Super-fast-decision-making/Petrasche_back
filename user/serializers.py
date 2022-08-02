@@ -9,12 +9,36 @@ EMAIL = ("@naver.com", "@gmail.com", "@kakao.com")
 
 class PetProfileSerializer(serializers.ModelSerializer):
 
-    pet_owner = serializers.SerializerMethodField()
+    # pet_owner = serializers.SerializerMethodField()
     article = ArticleSerializer(many=True, read_only=True)
+    image_file = serializers.FileField(write_only=True)
 
-    def get_pet_owner(self, obj):
-        return obj.user.username
+    # def get_pet_owner(self, obj):
+    #     return obj.user.username
 
+    def create(self, validated_data):
+        print(validated_data)
+        name = validated_data.pop('name')
+        birthday = validated_data.pop('birthday')
+        type = validated_data.pop('type')
+        gender = validated_data.pop('gender')
+        size = validated_data.pop('size')
+        user = validated_data.pop('user')
+        image_file = validated_data.pop('image_file')
+        url = s3(user,image_file,name)
+        # pet_profile = PetProfile(**validated_data)
+        # pet_profile.pet_profile_img = image_file
+        # pet_profile.save()
+        petprofile = PetProfile.objects.create(
+            user=user,
+            name=name,
+            birthday=birthday,
+            type=type,
+            gender=gender,
+            size=size,
+            pet_profile_img=url
+        )
+        return petprofile
 
     class Meta:
         model = PetProfile

@@ -10,7 +10,7 @@ env = environ.Env(
     DEBUG=(bool, True)
 )
 
-def upload(user,image):
+def upload(user,image,*args):
     s3 = boto3.client('s3',
         aws_access_key_id=env('AWSAccessKeyId'),
         aws_secret_access_key=env('AWSSecretKey'),
@@ -19,7 +19,10 @@ def upload(user,image):
 
     Bucket = "pracs3"
 
-    key = f'{user}/profile.jpg'
+    if args:
+        key = f'{user}/{args}/profile.jpg'
+    else:
+        key = f'{user}/profile.jpg'
 
     s3.put_object(
         ACL="public-read",
