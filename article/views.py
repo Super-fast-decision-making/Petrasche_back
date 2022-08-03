@@ -6,7 +6,7 @@ from rest_framework import status
 from article.models import Article, Image, Comment
 from article.serializers import ArticleSerializer, ImageSerializer, CommentSerializer
 from django.db.models import Count
-from user.models import User
+from user.models import User,PetProfile
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status, permissions
@@ -15,6 +15,8 @@ import requests
 from petrasche.settings import es_url
 
 from petrasche.pagination import PaginationHandlerMixin, BasePagination
+
+from article.s3upload import delete as s3_delete
 
 class ArticleView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -119,6 +121,9 @@ class MyArticleView(APIView, PaginationHandlerMixin):
 
     def delete(self, request, pk):
         article = Article.objects.get(pk=pk)
+        for image in article.image_set.all():
+            image_file = image.imgurl.replace('https://pracs3.s3.ap-northeast-2.amazonaws.com/', '')
+            s3_delete(image_file)
         article.delete()
         
         requests.delete(es_url + f"/article/{pk}") # es delete
@@ -178,9 +183,21 @@ class HashTagSearchView(APIView):
 class ArticleScrollView(APIView):
     authentication_classes=[JWTAuthentication]
 
-    def get(self, request,page):
+    def get(self, request, page):
         start = (int(page))*20
         end = start + 20
         articles = Article.objects.all().order_by('created_at')[start:end]
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ArticleSelectView(APIView):
+    authentication_classes=[JWTAuthentication]
+
+    def get(self, request, pet):
+        petprofiles = PetProfile.objects.filter(type=pet)
+        articles = Article.objects.filter(petprofile__in=petprofiles)
+        serializer = ArticleSerializer(articles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+            
+
+
