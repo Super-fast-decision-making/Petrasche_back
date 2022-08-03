@@ -35,3 +35,20 @@ def upload(user,image):
     url = f'https://{Bucket}.s3.ap-northeast-2.amazonaws.com/{key}'
 
     return url
+
+def delete(image):
+    s3 = boto3.client('s3',
+        aws_access_key_id=env('AWSAccessKeyId'),
+        aws_secret_access_key=env('AWSSecretKey'),
+        region_name='ap-northeast-2',
+    )
+
+    Bucket = "pracs3"
+
+    key = image
+
+    s3.delete_object(
+        Bucket=Bucket,
+        Key=key,
+    )
+    return True

@@ -1,5 +1,7 @@
 import environ,os, boto3
 from pathlib import Path
+import base64
+import hashlib
 import datetime
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,12 +26,13 @@ def upload(user,image,*args):
     else:
         key = f'{user}/profile.jpg'
 
+
     s3.put_object(
         ACL="public-read",
         Bucket=Bucket,
         Body=image,
         Key=key,
-        ContentType=image.content_type
+        ContentType=image.content_type,
         )
 
     url = f'https://{Bucket}.s3.ap-northeast-2.amazonaws.com/{key}'

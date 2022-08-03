@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.ArticleView.as_view()),
+    path('pet/<pet>/', views.ArticleSelectView.as_view()),
     path('page/<int:page>/', views.ArticleScrollView.as_view()),
     path('top/', views.ArticleTopView.as_view()),
     path('comment/<int:pk>/', views.CommentView.as_view()),

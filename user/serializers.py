@@ -1,9 +1,10 @@
+from copy import deepcopy
 from rest_framework import serializers
 from .models import User, PetProfile, UserProfile
 from article.models import Article, Image, Comment
 from article.serializers import ArticleSerializer
 from user.s3upload import upload as s3
-
+from user.mr import image_type as mr
 
 EMAIL = ("@naver.com", "@gmail.com", "@kakao.com")
 
@@ -17,15 +18,16 @@ class PetProfileSerializer(serializers.ModelSerializer):
     #     return obj.user.username
 
     def create(self, validated_data):
-        print(validated_data)
         name = validated_data.pop('name')
         birthday = validated_data.pop('birthday')
-        type = validated_data.pop('type')
         gender = validated_data.pop('gender')
         size = validated_data.pop('size')
         user = validated_data.pop('user')
         image_file = validated_data.pop('image_file')
+        choice_img = deepcopy(image_file)
         url = s3(user,image_file,name)
+        choice_type = mr(choice_img)
+        type = "1" if choice_type == "Dog" else "2"
         # pet_profile = PetProfile(**validated_data)
         # pet_profile.pet_profile_img = image_file
         # pet_profile.save()
@@ -38,6 +40,7 @@ class PetProfileSerializer(serializers.ModelSerializer):
             size=size,
             pet_profile_img=url
         )
+        
         return petprofile
 
     def update(self, instance, validated_data):
@@ -50,6 +53,12 @@ class PetProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = PetProfile
         fields = '__all__'
+
+        extra_kwargs = {
+            'type': {
+                'required': False,
+            }
+        }
 
 class UserProfileSerializer(serializers.ModelSerializer):
     # def update(self, instance, validated_data):
