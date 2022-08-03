@@ -53,7 +53,7 @@ class PetProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = PetProfile
         fields = '__all__'
-
+        
         extra_kwargs = {
             'type': {
                 'required': False,
@@ -61,13 +61,19 @@ class PetProfileSerializer(serializers.ModelSerializer):
         }
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    # def update(self, instance, validated_data):
+    
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            if attr == 'image_file':
+                url = s3(instance.user.id, value)
+                instance.profile_img = url
+            setattr(instance, attr, value)
+            instance.save()
+        return instance
         
-    #     instance.save()
-    #     return instance
     class Meta:
-        model = UserProfile
-        fields = '__all__'
+      model = UserProfile
+      fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
     petprofile = PetProfileSerializer(many=True, source="parent", read_only=True)  # 역참조 
