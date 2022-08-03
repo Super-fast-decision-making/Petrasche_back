@@ -32,6 +32,7 @@ services:
       - "443:443"
     depends_on:
       - backend
+      - asgiserver
     restart: always
 
   certbot:
@@ -52,8 +53,3 @@ services:
       - ./.env
     expose:
       - 8001
-    
-
-
-
-
