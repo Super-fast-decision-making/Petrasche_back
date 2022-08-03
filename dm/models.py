@@ -26,7 +26,6 @@ class Header(BaseModel):
     def __str__(self):
         return f"{self.id}///{self.sender}, {self.receiver}"
 
-        
 class Message(BaseModel):
     header = models.ForeignKey(Header, on_delete=models.CASCADE, null=True, blank=True, related_name='header')
     sender = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -37,3 +36,6 @@ class Message(BaseModel):
         
     def __str__(self):
         return f"{self.header} /// {self.sender} : '{self.message}'"
+    
+    
+

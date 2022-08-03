@@ -6,19 +6,17 @@ from rest_framework import status
 from article.models import Article, Image, Comment
 from article.serializers import ArticleSerializer, ImageSerializer, CommentSerializer
 from django.db.models import Count
-from user.models import User
+from user.models import User,PetProfile
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status, permissions
 import requests
 
-
-# es_url = 'http://allenpoe.iptime.org:9200/'
-# es_url = 'http://15.164.171.221:9200/'
-
 from petrasche.settings import es_url
 
 from petrasche.pagination import PaginationHandlerMixin, BasePagination
+
+from article.s3upload import delete as s3_delete
 
 class ArticleView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -123,6 +121,9 @@ class MyArticleView(APIView, PaginationHandlerMixin):
 
     def delete(self, request, pk):
         article = Article.objects.get(pk=pk)
+        for image in article.image_set.all():
+            image_file = image.imgurl.replace('https://pracs3.s3.ap-northeast-2.amazonaws.com/', '')
+            s3_delete(image_file)
         article.delete()
         
         requests.delete(es_url + f"/article/{pk}") # es delete
@@ -136,12 +137,8 @@ class SearchView(APIView):
 
     def get(self, request):
         search_words = request.query_params.get('words', '').strip()
-        if search_words == '':
+        if search_words == '' or not search_words:
             return Response({'message': '검색어를 입력해 주세요.'}, status=status.HTTP_404_NOT_FOUND)
-        
-        if not search_words:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'search word param is missing'})
-
         
         if search_words.startswith('#'):
             pattern = '#([0-9a-zA-Z가-힣]*)'
@@ -153,10 +150,12 @@ class SearchView(APIView):
             res = requests.get(es_url+'/article/_search?q='+ search_words)
         response = res.json()
         article_pk_list = []
-        for obj in response['hits']['hits']:
-            article_pk_list.append(obj["_source"]["pk"])
-        articles = Article.objects.filter(pk__in=article_pk_list)
-        
+        try:
+            for obj in response['hits']['hits']:
+                article_pk_list.append(obj["_source"]["pk"])
+            articles = Article.objects.filter(pk__in=article_pk_list)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': '검색 결과가 없습니다.'})
         return Response(ArticleSerializer(articles, many=True).data, status=status.HTTP_200_OK)
 
 
@@ -164,17 +163,18 @@ class HashTagSearchView(APIView):
 
     def get(self, request):
         search_words = request.query_params.get('words', '').strip()
-        if search_words == '':
-            return Response({'message': '검색어를 입력해 주세요.'}, status=status.HTTP_404_NOT_FOUND)
+        if search_words == '' or not search_words:
+            return Response(data={'message': '검색 결과가 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        if not search_words:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'search word param is missing'})
         res = requests.get(es_url+'/hashtag/_search?q='+ search_words)
         response = res.json()
         article_pk_list = []
-        for obj in response['hits']['hits']:
-            article_pk_list.append(obj["_source"]["pk"])
-        articles = Article.objects.filter(pk__in=article_pk_list)
+        try:
+            for obj in response['hits']['hits']:
+                article_pk_list.append(obj["_source"]["pk"])
+            articles = Article.objects.filter(pk__in=article_pk_list)
+        except:
+            return Response(data={'message': '검색 결과가 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
         
         return Response(ArticleSerializer(articles, many=True).data, status=status.HTTP_200_OK)
 
@@ -183,9 +183,21 @@ class HashTagSearchView(APIView):
 class ArticleScrollView(APIView):
     authentication_classes=[JWTAuthentication]
 
-    def get(self, request,page):
+    def get(self, request, page):
         start = (int(page))*20
         end = start + 20
         articles = Article.objects.all().order_by('created_at')[start:end]
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ArticleSelectView(APIView):
+    authentication_classes=[JWTAuthentication]
+
+    def get(self, request, pet):
+        petprofiles = PetProfile.objects.filter(type=pet)
+        articles = Article.objects.filter(petprofile__in=petprofiles)
+        serializer = ArticleSerializer(articles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+            
+
+

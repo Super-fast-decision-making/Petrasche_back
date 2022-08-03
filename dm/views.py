@@ -1,9 +1,10 @@
 from django.dispatch import receiver
+from dm import serializers
 from dm.models import Header
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from dm.serializers import HeaderSerializer
+from dm.serializers import HeaderSerializer, UserHeaderSerializer
 from user.models import User
 # Create your views here.
         
@@ -30,7 +31,7 @@ class ChatView(APIView):
     # receiver(pk=pk) 채팅방 생성
     def post(self, request, pk):
         sender = request.user
-        receiver = User.objects.get(pk=pk)       
+        receiver = User.objects.get(pk=pk)     
         try:
             #존재하는 채팅방이 있다면, 채팅방을 가져온다.
             header = Header.objects.get(sender=sender.id, receiver=receiver.id)
@@ -43,4 +44,14 @@ class ChatView(APIView):
                 receiver=receiver, 
             )
             return Response({"msg": "채팅방 생성!"}, status=200)
+        
+        
+class UserHeaderView(APIView):
+    authentication_classes=[JWTAuthentication]
+    # 활성화된 채팅방 리스트
+    def get(self, request, pk):
+        user = request.user
+        user = User.objects.filter(id=pk)
+        serializer = UserHeaderSerializer(user, many=True)
+        return Response(serializer.data, status=200)
                 

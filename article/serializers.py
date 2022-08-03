@@ -10,9 +10,6 @@ from user.models import UserFollowing
 import requests
 
 
-#es_url = 'http://allenpoe.iptime.org:9200/'
-# es_url = 'http://15.164.171.221:9200/'
-
 from petrasche.settings import es_url
 
 
@@ -90,6 +87,7 @@ class ArticleSerializer(BaseSerializer):
         for imageurl in imgurls:
             image_data = {'article': article, 'imgurl': imageurl}
             Image.objects.create(**image_data)
+            
         # es indexing 
         es_body = {
             "pk": article.pk,
@@ -97,7 +95,7 @@ class ArticleSerializer(BaseSerializer):
             "content": article.content
         }
         requests.post(es_url+f"/article/_doc/{article.pk}", json=es_body)
-        
+              
         # hashtags
         pattern = '#([0-9a-zA-Z가-힣]*)'
         hash_w = re.compile(pattern)
