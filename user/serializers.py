@@ -31,7 +31,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     petprofile = PetProfileSerializer(many=True, source="parent", read_only=True)  # 역참조 
     # userprofile = UserProfileSerializer(many=True, source="userprofile_set", read_only=True)  # 역참조 
-    # articles = ArticleSerializer(many=True, source="article_set", read_only=True)  # 역참조 
+    articles = ArticleSerializer(many=True, source="article_set", read_only=True)  # 역참조 
     like_articles = serializers.SerializerMethodField()
     phone_num = serializers.SerializerMethodField()
     profile_img = serializers.SerializerMethodField()
@@ -114,6 +114,7 @@ class UserSerializer(serializers.ModelSerializer):
     #         )
 
     def create(self, validated_data):
+        print(validated_data)
 
         gender_choice = validated_data.pop("gender_choice")
         birthday_date = validated_data.pop("birthday_date")
@@ -144,7 +145,7 @@ class UserSerializer(serializers.ModelSerializer):
         # fields = '__all__'
         fields =  ['id', 'password', 'username', 'email', 'gender', 'birthday', 'last_login', 'updated_at', 'created_at', 
         'latitude', 'longitude', 'petprofile', 'birthday_date', 'gender_choice', 'is_active_val', 'like_articles',
-        'phone_num', 'profile_img','introduction' ]
+        'phone_num', 'profile_img','introduction' , 'articles']
 
         extra_kwargs = {
             'password': {'write_only': True},
