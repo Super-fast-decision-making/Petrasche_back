@@ -56,10 +56,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
     image_file = serializers.FileField(write_only=True)
     
     def update(self, instance, validated_data):
-        image_file = validated_data.pop('image_file')
-        url = s3(instance.user.id, image_file)
-        instance.profile_img = url
-        instance.save()
+        for attr, value in validated_data.items():
+            if attr == 'image_file':
+                url = s3(instance.user.id, value)
+                instance.profile_img = url
+            setattr(instance, attr, value)
+            instance.save()
         return instance
 
     class Meta:
