@@ -10,11 +10,8 @@ class PetProfileSerializer(serializers.ModelSerializer):
 
     pet_owner = serializers.SerializerMethodField()
     article = ArticleSerializer(many=True, read_only=True)
-
     def get_pet_owner(self, obj):
         return obj.user.username
-
-
     class Meta:
         model = PetProfile
         fields = '__all__'
