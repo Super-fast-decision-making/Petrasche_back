@@ -1,5 +1,12 @@
 version: "3.9"
 services:
+
+  redis:
+    image: redis:5
+    command: redis-server --port 6379
+    ports:
+      - 6379:6379
+
   backend:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
@@ -11,6 +18,7 @@ services:
     env_file:
       - ./.env
     restart: always
+    
   nginx:
     image: nginx
     container_name: nginx
@@ -22,6 +30,21 @@ services:
     depends_on:
       - backend
     restart: always
+    
+  asgiserver:
+    build: .
+    command: daphne -u /tmp/daphne.sock petrasche.asgi:application --bind 0.0.0.0 -p 8001
+    ports:
+      - 8001:8001
+    working_dir: /srv/docker-server/
+    volumes:
+      - ./:/srv/docker-server/
+    env_file:
+      - ./.env
+    expose:
+      - 8001
+    
+
 
 
 

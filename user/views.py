@@ -85,6 +85,9 @@ class KakaoLoginView(APIView):
                 email=email,
             )
             new_user.save()
+            user = User.objects.get(username=username)
+            new_user_profile = UserProfile.objects.create(user=user)
+            new_user_profile.save()
             return Response({"msg": "회원가입에 성공 했습니다."}, status=status.HTTP_201_CREATED)
 
 
@@ -102,6 +105,7 @@ class OnlyAuthenticatedUserView(APIView):
         return Response(UserSerializer(request.user).data)
     
     def put(self, request, pk):
+        
         user = User.objects.get(id=pk)
         if request.user != user:
             return Response({"error": "접근 권한이 없습니다."}, status=status.HTTP_401_UNAUTHORIZED)
@@ -113,6 +117,7 @@ class OnlyAuthenticatedUserView(APIView):
                 else:
                     user_serializer = UserSerializer(user, data=request.data, partial=True)
             else:
+                # request.data['user'] = user
                 userprofile = UserProfile.objects.get(user=user)
                 user_serializer = UserProfileSerializer(userprofile, data=request.data, partial=True)
         if user_serializer.is_valid():
@@ -146,12 +151,12 @@ class PetView(APIView):
 
     def post(self, request):
         user = request.user
-
         request.data['user'] = user.id
 
         serializer=PetProfileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            print("hi")
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -258,4 +263,15 @@ class UserLocationView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PersonalProfilesView(APIView):
+    def get(self, request, pk):
+
+        user = User.objects.get(pk=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+
+
             
