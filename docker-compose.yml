@@ -9,7 +9,7 @@ services:
 
   backend:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: sh -c "python manage.py collectstatic --no-input && python manage.py migrate && gunicorn --bind 0.0.0.0:8000 petrasche.wsgi:application"
     ports:
       - 8000:8000
     working_dir: /srv/docker-server/
