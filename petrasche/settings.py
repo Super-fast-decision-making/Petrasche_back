@@ -37,11 +37,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['backend', '3.39.219.239']
 
+############################# 뒤에 / 붙이지 마세요!!!! ##########################
 CORS_ALLOWED_ORIGINS = [
+
     'http://127.0.0.1:5500',
     'http://petrasche.com',
     'https://dunwsm4qmc62w.cloudfront.net',
-
 ]
 
 # Application definition
@@ -114,28 +115,28 @@ CHANNEL_LAYERS = {
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-# POSTGRESQL_NAME = env('POSTGRESQL_NAME')
-# POSTGRESQL_USER = env('POSTGRESQL_USER')
-# POSTGRESQL_PASSWORD = env('POSTGRESQL_PASSWORD')
-# POSTGRESQL_HOST = env('POSTGRESQL_HOST')
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': POSTGRESQL_NAME,
-#         'USER': POSTGRESQL_USER,
-#         'PASSWORD': POSTGRESQL_PASSWORD,
-#         'HOST': POSTGRESQL_HOST,
-#         'PORT': '5432',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+POSTGRESQL_NAME = env('POSTGRESQL_NAME')
+POSTGRESQL_USER = env('POSTGRESQL_USER')
+POSTGRESQL_PASSWORD = env('POSTGRESQL_PASSWORD')
+POSTGRESQL_HOST = env('POSTGRESQL_HOST')
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': POSTGRESQL_NAME,
+        'USER': POSTGRESQL_USER,
+        'PASSWORD': POSTGRESQL_PASSWORD,
+        'HOST': POSTGRESQL_HOST,
+        'PORT': '5432',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -251,9 +252,13 @@ CORS_ORIGIN_WHITELIST = [
     
     ]
 
+
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'http://3.39.219.239']
 
+
+############################# 뒤에 / 붙이지 마세요!!!! ##########################
 # es_url = 'http://localhost:9200'
 es_url = 'http://allenpoe.iptime.org:9200'
+
 
 
