@@ -85,6 +85,9 @@ class KakaoLoginView(APIView):
                 email=email,
             )
             new_user.save()
+            user = User.objects.get(username=username)
+            new_user_profile = UserProfile.objects.create(user=user)
+            new_user_profile.save()
             return Response({"msg": "회원가입에 성공 했습니다."}, status=status.HTTP_201_CREATED)
 
 
@@ -258,4 +261,15 @@ class UserLocationView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PersonalProfilesView(APIView):
+    def get(self, request, pk):
+
+        user = User.objects.get(pk=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+
+
             
