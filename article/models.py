@@ -3,7 +3,7 @@ from user.models import BaseModel, User
 
 class Article(BaseModel):
     title = models.CharField("제목", max_length=200, null=True)
-    user = models.ForeignKey('user.User', verbose_name="작성자", on_delete=models.CASCADE)
+    user = models.ForeignKey('user.User', verbose_name="작성자", on_delete=models.CASCADE, null=True)
     content = models.TextField("내용")
     like = models.ManyToManyField(User, related_name="like_articles", verbose_name="좋아요", blank=True)
     is_active = models.BooleanField("공개 여부", default=True)
