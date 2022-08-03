@@ -13,6 +13,7 @@ urlpatterns = [
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('authonly/', views.OnlyAuthenticatedUserView.as_view()),
     path('authonly/<int:pk>/', views.OnlyAuthenticatedUserView.as_view()),
+    path('userarticle/<int:pk>/', views.PersonalProfilesView.as_view()),
     path('follow/', views.UserFollowingView.as_view()),
     path('mypet/', views.PetView.as_view()),
     path('mypet/<int:pk>/', views.PetDetailView.as_view()),

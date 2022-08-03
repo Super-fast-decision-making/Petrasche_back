@@ -156,7 +156,6 @@ class PetView(APIView):
         serializer=PetProfileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            print("hi")
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -263,4 +262,15 @@ class UserLocationView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PersonalProfilesView(APIView):
+    def get(self, request, pk):
+
+        user = User.objects.get(pk=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+
+
             

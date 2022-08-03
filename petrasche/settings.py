@@ -37,9 +37,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['backend', '3.39.219.239', '127.0.0.1']
 
+############################# 뒤에 / 붙이지 마세요!!!! ##########################
 CORS_ALLOWED_ORIGINS = [
+
     'http://127.0.0.1:5500',
-'https://dunwsm4qmc62w.cloudfront.net',
+    'http://petrasche.com',
+    'https://dunwsm4qmc62w.cloudfront.net',
 ]
 
 # Application definition
@@ -63,6 +66,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
+    #'sslserver'
 
     # # django-allauth
     # 'allauth',
@@ -254,8 +258,9 @@ CORS_ORIGIN_WHITELIST = [
     ]
 
 
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'http://3.39.219.239']
+
+
 ############################# 뒤에 / 붙이지 마세요!!!! ##########################
 # es_url = 'http://localhost:9200'
 es_url = 'http://allenpoe.iptime.org:9200'
-
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1']
