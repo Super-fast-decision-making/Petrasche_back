@@ -184,7 +184,7 @@ class ArticleScrollView(APIView):
     authentication_classes=[JWTAuthentication]
 
     def get(self, request, page):
-        start = (int(page))*20
+        start = (int(page))*20+20
         end = start + 20
         articles = Article.objects.all().order_by('created_at')[start:end]
         serializer = ArticleSerializer(articles, many=True)
@@ -195,7 +195,7 @@ class ArticleSelectView(APIView):
 
     def get(self, request, pet):
         petprofiles = PetProfile.objects.filter(type=pet)
-        articles = Article.objects.filter(petprofile__in=petprofiles)
+        articles = Article.objects.filter(petprofile__in=petprofiles).order_by('-created_at')
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
             
