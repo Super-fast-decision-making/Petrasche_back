@@ -195,7 +195,7 @@ class ArticleSelectView(APIView):
 
     def get(self, request, pet):
         petprofiles = PetProfile.objects.filter(type=pet)
-        articles = Article.objects.filter(petprofile__in=petprofiles)
+        articles = Article.objects.filter(petprofile__in=petprofiles).order_by('-created_at')
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
             

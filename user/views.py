@@ -267,6 +267,7 @@ class UserLocationView(APIView):
 class PersonalProfilesView(APIView):
     def get(self, request, pk):
 
+
         user = User.objects.get(pk=pk)
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)

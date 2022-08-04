@@ -62,6 +62,8 @@ class PetProfileSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     
+    image_file = serializers.FileField(write_only=True)
+
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
             if attr == 'image_file':
@@ -72,13 +74,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return instance
         
     class Meta:
-      model = UserProfile
-      fields = '__all__'
+        model = UserProfile
+        fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
     petprofile = PetProfileSerializer(many=True, source="parent", read_only=True)  # 역참조 
     # userprofile = UserProfileSerializer(many=True, source="userprofile_set", read_only=True)  # 역참조 
-    # articles = ArticleSerializer(many=True, source="article_set", read_only=True)  # 역참조 
+    articles = ArticleSerializer(many=True, source="article_set", read_only=True)  # 역참조 
     like_articles = serializers.SerializerMethodField()
     phone_num = serializers.SerializerMethodField()
     profile_img = serializers.SerializerMethodField()
@@ -189,9 +191,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # fields = '__all__'
-        fields =  ['id', 'password', 'username', 'email', 'gender', 'birthday', 'last_login', 'updated_at', 'created_at', 
+        fields =  ['id', 'password','articles', 'username', 'email', 'gender', 'birthday', 'last_login', 'updated_at', 'created_at', 
         'latitude', 'longitude', 'petprofile', 'birthday_date', 'gender_choice', 'is_active_val', 'like_articles',
-        'phone_num', 'profile_img','introduction' ]
+        'phone_num', 'profile_img','introduction']
 
         extra_kwargs = {
             'password': {'write_only': True},
