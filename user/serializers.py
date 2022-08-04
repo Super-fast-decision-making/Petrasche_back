@@ -62,6 +62,8 @@ class PetProfileSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     
+    image_file = serializers.FileField(write_only=True)
+
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
             if attr == 'image_file':
