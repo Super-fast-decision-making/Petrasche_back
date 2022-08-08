@@ -1,3 +1,4 @@
+from ast import Delete
 from django.dispatch import receiver
 from dm import serializers
 from dm.models import Header
@@ -44,6 +45,15 @@ class ChatView(APIView):
                 receiver=receiver, 
             )
             return Response({"msg": "채팅방 생성!"}, status=200)
+        
+    def delete(self, request, pk):
+        header = Header.objects.get(pk=pk)
+        header.delete()
+        return Response({"massege" : "삭제 성공"},status=200)
+
+        
+
+        
         
         
 class UserHeaderView(APIView):
