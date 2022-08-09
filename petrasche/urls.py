@@ -25,6 +25,6 @@ urlpatterns = [
     path('walk/', include('walk.urls')),
     path('search/', include('search_app.urls')),
     path('tournament/', include('tournament.urls')),
-    path('ckeditor//', include('ckeditor_uploader.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 
 ]
