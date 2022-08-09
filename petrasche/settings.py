@@ -43,6 +43,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5500',
     'http://petrasche.com',
     'https://dunwsm4qmc62w.cloudfront.net',
+	'https://www.perasche.com',
 ]
 
 # Application definition
