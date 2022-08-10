@@ -46,7 +46,6 @@ ALLOWED_HOSTS = [
 
 ############################# 뒤에 / 붙이지 마세요!!!! ##########################
 CORS_ALLOWED_ORIGINS = [
-
     'http://127.0.0.1:5500',
     'http://petrasche.com',
     'https://dunwsm4qmc62w.cloudfront.net',
