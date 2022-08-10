@@ -18,6 +18,8 @@ from petrasche.pagination import PaginationHandlerMixin, BasePagination
 
 from article.s3upload import delete as s3_delete
 
+from article.replacehtml import replace_html as text_re
+
 class ArticleView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -59,7 +61,7 @@ class CommentView(APIView):
     authentication_classes=[JWTAuthentication]
 
     def get(self, request, pk):
-        comments = Comment.objects.filter(article=pk)
+        comments = Comment.objects.filter(article=pk).order_by('-created_at')
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
         
@@ -68,6 +70,7 @@ class CommentView(APIView):
         article = Article.objects.get(pk=pk)
         request.data['article'] = article.id
         request.data['user'] = user.id
+        request.data['comment'] = text_re(request.data['comment'])
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -77,6 +80,7 @@ class CommentView(APIView):
     def put(self, request, pk):
         user = request.user
         comment = Comment.objects.get(pk=pk)
+        request.data['comment'] = text_re(request.data['comment'])
         if comment.user == user:
             serializer = CommentSerializer(comment, data=request.data, partial=True)
             if serializer.is_valid():
@@ -130,6 +134,7 @@ class MyArticleView(APIView, PaginationHandlerMixin):
 
     def put(self, request, pk):
         user = request.user
+        request.data['content'] = text_re(request.data['content'])
         article = Article.objects.get(pk=pk)
         if article.user == user:
             serializer = ArticleSerializer(article, data=request.data, partial=True)
