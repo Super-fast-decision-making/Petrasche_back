@@ -50,6 +50,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://petrasche.com',
     'https://dunwsm4qmc62w.cloudfront.net',
 	'https://www.petrasche.com',
+    'https://www.petrasche.site',
 ]
 
 # Application definition
