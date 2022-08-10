@@ -41,6 +41,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1', 
     'www.petrasche.site',
     'petrasche-env-1.eba-ksmihq68.ap-northeast-2.elasticbeanstalk.com',
+    '*',
     ]
 
 ############################# 뒤에 / 붙이지 마세요!!!! ##########################
