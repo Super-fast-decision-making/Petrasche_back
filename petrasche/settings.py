@@ -35,7 +35,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['backend', '3.39.219.239', '127.0.0.1', 'www.petrasche.site','172.31.7.38']
+ALLOWED_HOSTS = ['backend', '3.39.219.239', '127.0.0.1', 'www.petrasche.site','172.31.7.38', 'petrasche-env-1.eba-ksmihq68.ap-northeast-2.elasticbeanstalk.com']
 
 ############################# 뒤에 / 붙이지 마세요!!!! ##########################
 CORS_ALLOWED_ORIGINS = [
