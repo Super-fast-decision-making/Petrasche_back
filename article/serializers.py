@@ -1,5 +1,4 @@
 from asyncore import write
-import re
 from rest_framework import serializers
 from article.models import Article, Image, Comment
 from article.s3upload import upload as s3
@@ -8,10 +7,15 @@ from user.models import UserFollowing, PetProfile, UserProfile
 from dm.serializers import BaseSerializer
 from user.models import UserFollowing
 import requests
-
+from article.replacehtml import replace_html as text_re
+import re
 
 from petrasche.settings import es_url
 
+def html_tag_reaplace(content):
+        # 태그 삭제
+        content = content.replace('/<(\/)?([a-zA-Z]*)(\s[a-zA-Z]*=[^>]*)?(\s)*(\/)?>/gi', '')
+        return content
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -71,6 +75,7 @@ class ArticleSerializer(BaseSerializer):
         return [image.imgurl for image in obj.image_set.all()]
 
     def create(self, validated_data):
+        validated_data['content'] = text_re(validated_data['content'])
         try:
             user_pet = validated_data.pop('user_pet')
         except:

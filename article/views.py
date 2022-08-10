@@ -18,6 +18,8 @@ from petrasche.pagination import PaginationHandlerMixin, BasePagination
 
 from article.s3upload import delete as s3_delete
 
+from article.replacehtml import replace_html as text_re
+
 class ArticleView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -37,21 +39,29 @@ class ArticleView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ArticleTopView(APIView):
+    permission_classes = [permissions.AllowAny]
+
     def get(self, request):
         articles = Article.objects.all()
-        top_articles = articles.annotate(like_count=Count('like')).annotate(comment_count=Count('comment')).order_by('-like_count')[:7]
+        top_articles = articles.annotate(like_count=Count('like')).annotate(comment_count=Count('comment')).order_by('-like_count')[:9]
         top_articles = ArticleSerializer(top_articles, many=True)
         return Response(top_articles.data, status=status.HTTP_200_OK)
 
 class ArticleDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
+
     def get(self, request, pk):
         article = Article.objects.get(pk=pk)
         serializer = ArticleSerializer(article)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class CommentView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
+
     def get(self, request, pk):
-        comments = Comment.objects.filter(article=pk)
+        comments = Comment.objects.filter(article=pk).order_by('-id')
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
         
@@ -60,6 +70,7 @@ class CommentView(APIView):
         article = Article.objects.get(pk=pk)
         request.data['article'] = article.id
         request.data['user'] = user.id
+        request.data['comment'] = text_re(request.data['comment'])
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -67,19 +78,29 @@ class CommentView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk):
+        user = request.user
         comment = Comment.objects.get(pk=pk)
-        serializer = CommentSerializer(comment, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        request.data['comment'] = text_re(request.data['comment'])
+        if comment.user == user:
+            serializer = CommentSerializer(comment, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"massege" : "수정 권한이 없습니다."},status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, pk):
+        user = request.user
         comment = Comment.objects.get(pk=pk)
-        comment.delete()
-        return Response({"massege" : "삭제 성공"},status=status.HTTP_200_OK)
+        if comment.user == user:
+            comment.delete()
+            return Response({"massege" : "삭제"},status=status.HTTP_200_OK)
+        return Response({"massege" : "삭제 권한이 없습니다."},status=status.HTTP_400_BAD_REQUEST)
 
 class LikeView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
+
     def post(self, request, pk):
         user = request.user
         try: 
@@ -112,28 +133,37 @@ class MyArticleView(APIView, PaginationHandlerMixin):
         
 
     def put(self, request, pk):
+        user = request.user
+        request.data['content'] = text_re(request.data['content'])
         article = Article.objects.get(pk=pk)
-        serializer = ArticleSerializer(article, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if article.user == user:
+            serializer = ArticleSerializer(article, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"massege" : "수정 권한이 없습니다."},status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
+        user = request.user
         article = Article.objects.get(pk=pk)
-        for image in article.image_set.all():
-            image_file = image.imgurl.replace('https://pracs3.s3.ap-northeast-2.amazonaws.com/', '')
-            s3_delete(image_file)
-        article.delete()
-        
-        requests.delete(es_url + f"/article/{pk}") # es delete
-        requests.delete(es_url + f"/hashtag/{pk}") # es hashtag delete
-        
-        return Response({"massege" : "삭제 성공"},status=status.HTTP_200_OK)
+        if article.user == user:
+            for image in article.image_set.all():
+                image_file = image.imgurl.replace('https://pracs3.s3.ap-northeast-2.amazonaws.com/', '')
+                s3_delete(image_file)
+            article.delete()
+            
+            requests.delete(es_url + f"/article/{pk}") # es delete
+            requests.delete(es_url + f"/hashtag/{pk}") # es hashtag delete
+            
+            return Response({"massege" : "삭제 성공"},status=status.HTTP_200_OK)
+        return Response({"massege" : "삭제 권한이 없습니다."},status=status.HTTP_400_BAD_REQUEST)
     
     
 # es _search
 class SearchView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
 
     def get(self, request):
         search_words = request.query_params.get('words', '').strip()
@@ -160,6 +190,8 @@ class SearchView(APIView):
 
 
 class HashTagSearchView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
 
     def get(self, request):
         search_words = request.query_params.get('words', '').strip()
@@ -181,16 +213,18 @@ class HashTagSearchView(APIView):
 
 
 class ArticleScrollView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     authentication_classes=[JWTAuthentication]
 
     def get(self, request, page):
-        start = (int(page))*20
+        start = (int(page))*20 + 1
         end = start + 20
-        articles = Article.objects.all().order_by('created_at')[start:end]
+        articles = Article.objects.all().order_by('-created_at')[start:end]
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class ArticleSelectView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     authentication_classes=[JWTAuthentication]
 
     def get(self, request, pet):

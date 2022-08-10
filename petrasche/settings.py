@@ -24,7 +24,7 @@ env = environ.Env(
 
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -35,7 +35,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['backend', '3.39.219.239', '127.0.0.1']
+ALLOWED_HOSTS = ['backend', '3.39.219.239', '127.0.0.1', 'www.petrasche.site']
 
 ############################# 뒤에 / 붙이지 마세요!!!! ##########################
 CORS_ALLOWED_ORIGINS = [
@@ -43,6 +43,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5500',
     'http://petrasche.com',
     'https://dunwsm4qmc62w.cloudfront.net',
+	'https://www.petrasche.com',
 ]
 
 # Application definition
