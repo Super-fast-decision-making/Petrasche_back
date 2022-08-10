@@ -12,6 +12,24 @@ import re
 
 from petrasche.settings import es_url
 
+def time_calculate(time):
+    if time < 60:
+        time = '방금'
+    elif time < 3600:
+        time = str(int(time / 60)) + '분전'
+    elif time < 86400:
+        time = str(int(time / 3600)) + '시간전'
+    elif time < 604800:
+        time = str(int(time / 86400)) + '일전'
+    elif time < 2592000:
+        time = str(int(time / 604800)) + '주전'
+    elif time < 31536000:
+        time = str(int(time / 2592000)) + '달전'
+    else:
+        time = str(int(time / 31536000)) + '년전' 
+    
+    return time
+
 def html_tag_reaplace(content):
         # 태그 삭제
         content = content.replace('/<(\/)?([a-zA-Z]*)(\s[a-zA-Z]*=[^>]*)?(\s)*(\/)?>/gi', '')
@@ -34,10 +52,8 @@ class CommentSerializer(BaseSerializer):
         model = Comment
         fields = '__all__'
 
-
 class ArticleSerializer(BaseSerializer):
     article_pet_list = serializers.SerializerMethodField()
-    comment = CommentSerializer(many=True, read_only=True, source='comment_set')
     likes = serializers.SerializerMethodField()
     like_users = serializers.SerializerMethodField()
     like_num = serializers.SerializerMethodField()
@@ -47,6 +63,21 @@ class ArticleSerializer(BaseSerializer):
     author = serializers.SerializerMethodField()
     user_following = serializers.SerializerMethodField()
     profile_img = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
+
+    def get_comments(self, obj):
+        comment_lists = []
+        for comment in obj.comment_set.all().order_by('-created_at'):
+            comment.created_at = time_calculate(datetime.now().timestamp() - comment.created_at.timestamp())
+            doc = {
+                "id": comment.pk,
+                "comment": comment.comment,
+                "userid": comment.user.id,
+                "username": comment.user.username,
+                "created_at": comment.created_at
+            }
+            comment_lists.append(doc)
+        return comment_lists
 
     def get_profile_img(self, obj):
         user_profiles = UserProfile.objects.filter(user=obj.user.id)
@@ -164,4 +195,4 @@ class ArticleSerializer(BaseSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'user', 'title', 'content', 'is_active', 'comment', 'images', 'image_lists', 'likes', 'like_num', 'author', 'date', 'user_following','user_pet','article_pet_list','like_users', 'profile_img']
+        fields = ['id', 'user', 'title', 'content', 'is_active', 'images', 'image_lists', 'likes', 'like_num', 'author', 'date', 'user_following','user_pet','article_pet_list','like_users', 'profile_img', 'comments']
