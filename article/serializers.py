@@ -14,7 +14,7 @@ from petrasche.settings import es_url
 
 def time_calculate(time):
     if time < 60:
-        time = str(time) + '초전'
+        time = '0분전'
     elif time < 3600:
         time = str(int(time / 60)) + '분전'
     elif time < 86400:
