@@ -61,7 +61,7 @@ class CommentView(APIView):
     authentication_classes=[JWTAuthentication]
 
     def get(self, request, pk):
-        comments = Comment.objects.filter(article=pk).order_by('-created_at')
+        comments = Comment.objects.filter(article=pk).order_by('-id')
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
         
