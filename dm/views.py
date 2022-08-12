@@ -45,6 +45,11 @@ class ChatView(APIView):
             )
             return Response({"msg": "채팅방 생성!"}, status=200)
         
+    def delete(self, request, pk):
+        header = Header.objects.get(pk=pk)
+        header.delete()
+        return Response({"massege" : "삭제 성공"},status=200)
+        
         
 class UserHeaderView(APIView):
     authentication_classes=[JWTAuthentication]
