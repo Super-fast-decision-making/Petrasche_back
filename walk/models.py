@@ -2,12 +2,8 @@ from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.urls import register_converter
 from user.models import BaseModel, User
+import datetime
 # Create your models here.
-
-
-
-
-
 
 class WalkingMate(BaseModel):#relation_name
     host=models.ForeignKey('user.User', related_name='event', verbose_name="호스트", on_delete=models.CASCADE)
@@ -22,4 +18,13 @@ class WalkingMate(BaseModel):#relation_name
     people_num=models.CharField('참여자수', max_length=20)
     contents= RichTextUploadingField('내용', blank=True, null=True)
     attending_user = models.ManyToManyField('user.User', related_name='program', verbose_name="참여자 명단", blank=True)
-    status= models.BooleanField('', default=True) #False= 마감 True=마감전
+    
+    @property
+    def deadeline_status(self):
+        ''' 시간이 지나거나 사람 인원이 다 차면 False=마감, True=마감전 '''
+        if (self.start_time<=datetime.datetime.now()):       
+            return False
+        return True
+
+    def __str__(self):
+        return f'{self.host.username}의 모임'

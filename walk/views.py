@@ -14,36 +14,29 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class WalkingMateView(APIView, PaginationHandlerMixin):
-    
     authentication_classes=[JWTAuthentication]
     pagination_class = BasePagination # query_param 설정 /?page=<int>
     serializer_class = WalkingMateSerializer
     def get(self,request):
-        check_region = self.request.query_params.get('region','')
-        check_gender = self.request.query_params.get('gender','')
-        check_number = self.request.query_params.get('number','')
-        check_size = self.request.query_params.get('size','')
-        check_date = self.request.query_params.get('start_date','')
-
         articles = WalkingMate.objects.all().order_by('-created_at')
-        if check_date:
-            articles= articles.filter(start_date=check_date)
-        if check_gender:
-            articles= articles.filter(gender=check_gender)
-        if check_region:
-            articles= articles.filter(region=check_region)
-        if check_number:
-            articles= articles.filter(people_num=check_number)
-        if check_size:
-            articles= articles.filter(size=check_size)
+
+        region = self.request.query_params.get('region','')
+        gender = self.request.query_params.get('gender','')
+        people_num = self.request.query_params.get('people_num','')
+        size = self.request.query_params.get('size','')
+        start_date = self.request.query_params.get('start_date','')
+
+        param_keys=[region, gender, people_num, size, start_date]
+        
+        for key in param_keys:
+            if key:
+                articles = articles.filter(key=key)
 
         page = self.paginate_queryset(articles)
         if page != None:
-
             serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
         else:
             serializer = self.serializer_class(articles, many=True)
-        # print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self,request):
@@ -60,7 +53,6 @@ class WalkingMateView(APIView, PaginationHandlerMixin):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
 
 class WalkingMateDetailView(APIView):
 
