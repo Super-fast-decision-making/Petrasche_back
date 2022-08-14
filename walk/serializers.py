@@ -16,7 +16,6 @@ class WalkingMateSerializer(BaseSerializer):
         except:
             return f'https://cdn.pixabay.com/photo/2017/09/25/13/12/cocker-spaniel-2785074__480.jpg'
     
-
     def get_host_name(self,obj):
         return obj.host.username
     
@@ -30,5 +29,5 @@ class WalkingMateSerializer(BaseSerializer):
         model = WalkingMate
         fields = ['id','host','host_name', 'image', 'start_date', 'start_time', 'end_time', 'region', 
         'place', 'gender', 'size', 'people_num', 'contents', 'attending_user', 
-        'created_at', 'updated_at', 'left_seat', 'host_pic', 'deadeline_status']
+        'created_at', 'updated_at', 'left_seat', 'host_pic', 'deadline_status']
         

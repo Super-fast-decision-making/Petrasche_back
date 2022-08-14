@@ -20,9 +20,9 @@ class WalkingMate(BaseModel):#relation_name
     attending_user = models.ManyToManyField('user.User', related_name='program', verbose_name="참여자 명단", blank=True)
     
     @property
-    def deadeline_status(self):
+    def deadline_status(self):
         ''' 시간이 지나거나 사람 인원이 다 차면 False=마감, True=마감전 '''
-        if (self.start_time<=datetime.datetime.now()):       
+        if (self.start_time<=datetime.datetime.now()) or (int(self.people_num[0])-1-(self.attending_user.count())<=0):       
             return False
         return True
 
