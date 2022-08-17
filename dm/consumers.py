@@ -11,15 +11,11 @@ print("******************")
 print("******************")
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        print('connected')
         #url에 room_id를 받아서 가져온다.
         self.room_id = self.scope['url_route']['kwargs']['room_id']
         self.user_id = self.scope['url_route']['kwargs']
-        print(self.user_id, "17")
         self.room_group_name = 'chat_%s' % self.room_id
         
-        print("그룹네임", self.room_group_name)
-
         # Join room group
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -36,14 +32,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         received_data = json.loads(text_data)
-        print("리시브",received_data)
         msg = received_data.get('message')
         sent_by_id = received_data.get('sent_by')
         send_to_id = received_data.get('send_to')
         header_id = received_data.get('header_id')
 
         if not msg:
-            print('Error:: empty message')
             return False
 
         sender = await self.get_user_object(sent_by_id)
@@ -63,7 +57,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         now_date = datetime.now().strftime('%Y년 %m월 %d일 %A')
         now_time = datetime.now().strftime('%p %I:%M')
-        print(now_date, now_time)
 
         response = {
             'message': msg,

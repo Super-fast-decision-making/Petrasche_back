@@ -19,10 +19,8 @@ class WalkingMateView(APIView, PaginationHandlerMixin):
     serializer_class = WalkingMateSerializer
     def get(self,request):
         query = {key:value for key, value in self.request.query_params.items() if key != "p"}
-        print(self.request.query_params)
         articles = WalkingMate.objects.filter(**query)
         page = self.paginate_queryset(articles)
-        print(self.paginate_queryset(articles))
         if page != None:
             serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
         else:
